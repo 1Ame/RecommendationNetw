@@ -1,0 +1,67 @@
+@model RecommendationNetw.ViewModels.Recommendations.IndexViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Name
+        </th>   
+        <th></th>     
+    </tr>
+    
+@foreach (var item in Model.Items)
+{
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>        
+        <td>
+            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+        </td>
+    </tr>
+}
+</table>
+
+@if (Model.PagingInfo.EndPage > 1)
+{
+    <ul class="pagination">
+        @if (Model.PagingInfo.CurrentPage > 1)
+        {
+            <li>
+                <a asp-action="Index">First</a>
+            </li>
+            <li>
+                <a asp-action="Index" asp-route-page="@(Model.PagingInfo.CurrentPage - 1)">Previous</a>
+            </li>
+        }
+
+        @for (var page = Model.PagingInfo.StartPage; page <= Model.PagingInfo.EndPage; page++)
+        {
+            <li class="@(page == Model.PagingInfo.CurrentPage ? "active" : "")">
+                <a asp-action ="Index" asp-route-page="@page">@page</a>
+            </li>   
+        }
+
+        @if (Model.PagingInfo.CurrentPage < Model.PagingInfo.TotalPages)
+        {
+            <li>
+                <a asp-action="Index" asp-route-page="@(Model.PagingInfo.CurrentPage + 1)">Next</a> 
+            </li>
+
+            <li>
+                <a asp-action="Index" asp-route-page="@(Model.PagingInfo.TotalPages)">Last</a>            
+            </li>
+        }
+    </ul>
+    }
+}

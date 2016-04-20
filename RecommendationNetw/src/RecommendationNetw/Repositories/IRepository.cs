@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace RecommendationNetw.Repositories
 {
-    interface IRepository<T, in Tkey> where T : class
+    public interface IRepository<T, in Tkey> where T : class
     {
-        IQueryable<T> Items { get; }
-
-        Task<IEnumerable<T>> GetAllAsync();
-        Task<T> GetAsync(Tkey Id);
-        T Create(T item);
-        T Update(T item);
+        IEnumerable<T> GetAllAsync();
+        T GetAsync(Tkey Id);
+        bool Create(T item);
+        bool Update(T item);
         T Remove(Tkey Id);
 
         //maybe some extencions

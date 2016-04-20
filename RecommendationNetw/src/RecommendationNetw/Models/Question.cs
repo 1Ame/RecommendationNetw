@@ -5,14 +5,12 @@ using System.Threading.Tasks;
 
 namespace RecommendationNetw.Models
 {
-    public class Tag
+    public class Question
     {
         public string Id { get; set; }
 
-        public string Name { get; set; }
+        public string Text { get; set; }
 
-        public string Description { get; set; }
-
-        //public virtual List<Recommendation> Recommendations { get; set; }
+        public int OrderNum { get; set; }
     }
 }

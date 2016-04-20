@@ -9,6 +9,7 @@ namespace RecommendationNetw.Models
     // Add profile data for application users by adding properties to the ApplicationUser class
     public class ApplicationUser : IdentityUser
     {
-        public virtual List<Recomendation> Recommendations { get; set; }
+        public virtual List<Answer> Answers { get; set; }
+        public virtual List<Recommendation> Recommendations { get; set; }
     }
 }
