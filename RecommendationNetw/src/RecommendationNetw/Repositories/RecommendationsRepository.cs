@@ -1,77 +1,76 @@
-﻿using RecommendationNetw.Models;
+﻿using Microsoft.Data.Entity;
+using RecommendationNetw.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace RecommendationNetw.Repositories
 {
     public class RecommendationsRepository : IRepository<Recommendation, string>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext context = null;
 
-        public RecommendationsRepository(ApplicationDbContext context)
+        public RecommendationsRepository(ApplicationDbContext Сontext)
         {
-            _context = context;
+            context = Сontext;
         }
 
-        public IEnumerable<Recommendation> GetAllAsync()
+        public async Task<IEnumerable<Recommendation>> GetAllAsync()
         {
-            return _context.Recommendations;
+            return await context.Recommendations.ToListAsync();
         }
-        public Recommendation GetAsync(string Id)
+        public async Task<IEnumerable<Recommendation>> GetAllAsync(Expression<Func<Recommendation, bool>> predicate)
         {
-            return _context.Recommendations.FirstOrDefault(x => x.Id == Id);
+            return await context.Recommendations.Where(predicate).ToListAsync();
         }
-        public bool Create(Recommendation item)
+        public async Task<Recommendation> GetAsync(string Id)
         {
-            try
-            {
-                _context.Recommendations.Add(item);
-                _context.SaveChanges();
-                return true;
-            }
-            catch(Exception e)
-            {
-                return false;
-            }
+            return await context.Recommendations.FirstOrDefaultAsync(x=>x.Id == Id);
         }
-        public bool Update(Recommendation item)
+        public async Task<Recommendation> CreateAsync(Recommendation item)
+        {            
+            context.Recommendations.Add(item);
+            await context.SaveChangesAsync();
+            return item;            
+        }
+        public async Task<Recommendation> UpdateAsync(Recommendation item)
         {
-            try
-            {
-                var dbEntry = _context.Recommendations.FirstOrDefault(x => x.Id == item.Id);
+            
+            if (item == null)
+                return null;
+                 
+            var dbEntry = await context.Recommendations.FirstOrDefaultAsync(x => x.Id == item.Id);
 
-                if (dbEntry == null)
-                    return false;
-
+            if (dbEntry != null)
+            {                
                 dbEntry.Title = item.Title;
                 dbEntry.Description = item.Description;
                 dbEntry.ShortDescription = item.ShortDescription;
                 dbEntry.Category = item.Category;
-                dbEntry.Modified = item.Modified;
+                dbEntry.ModifiedOn = DateTime.Now;
 
-                _context.SaveChanges();
-
-                return true;
+                await context.SaveChangesAsync();
             }
-            catch
-            {
-                return false;
-            }
+            return dbEntry;            
         }
-        public Recommendation Remove(string Id)
+        public async Task<Recommendation> DeleteAsync(string Id)
         {
-            var dbEntry = _context.Recommendations.FirstOrDefault(x => x.Id == Id);
+            var dbEntry = context.Recommendations.FirstOrDefault(x => x.Id == Id);
             if (dbEntry != null)
             {
-                _context.Recommendations.Remove(dbEntry);
-                _context.SaveChanges();
+                context.Recommendations.Remove(dbEntry);
+                await context.SaveChangesAsync();
             }
             return dbEntry;
         }
+        public async Task<int> CountAsync()
+        {
+            return await context.Recommendations.CountAsync();
+        }
 
-        
+
 
     }
 }

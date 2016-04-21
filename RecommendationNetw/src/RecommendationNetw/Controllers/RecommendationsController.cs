@@ -15,18 +15,25 @@ namespace RecommendationNetw.Controllers
 {
     public class RecommendationsController : Controller
     {
-        private IRepository<Recommendation, string> _repository;
+        private readonly IRepository<Recommendation, string> repository = null;
 
-        public RecommendationsController(IRepository<Recommendation, string> repository)
+        public RecommendationsController(IRepository<Recommendation, string> Repository)
         {
-            _repository = repository;
+            repository = Repository;
         }
 
         // GET: Recommendations
-        public IActionResult Index(int? page)
+        public async Task<IActionResult> Index(int? page)
         {
-            var pagingInfo = new PagingInfo(_repository.GetAllAsync().Count(), page);
-            return View();
+            var items = await repository.GetAllAsync(x => x.OwnerId == HttpContext.User.GetUserId());
+            var pagingInfo = new PagingInfo(items.Count(), page,1);
+
+            var model = new IndexViewModel()
+            {
+                Items = items.Skip((pagingInfo.CurrentPage - 1) * pagingInfo.PageSize).Take(pagingInfo.PageSize),
+                PagingInfo = pagingInfo
+            };
+            return View(model);
         }
 
         // GET: Recommendations/Details/5
@@ -37,7 +44,7 @@ namespace RecommendationNetw.Controllers
                 return HttpNotFound();
             }
 
-            Recommendation recommendation = _repository.GetAsync(id);
+            Recommendation recommendation = await repository.GetAsync(id);
             if (recommendation == null)
             {
                 return HttpNotFound();
@@ -49,6 +56,7 @@ namespace RecommendationNetw.Controllers
         // GET: Recommendations/Create
         public IActionResult Create()
         {
+            ViewBag.Action = "Create";
             return View("Edit", new Recommendation());
         }
 
@@ -60,97 +68,64 @@ namespace RecommendationNetw.Controllers
                 return HttpNotFound();
             }
 
-            var model =  _repository.GetAsync(Id);
+            var model = await  repository.GetAsync(Id);
             if (model == null)
             {
                 return HttpNotFound();
             }
+            ViewBag.Action = "Edit";
             return View(model);
         }
 
-        // POST: Recommendations/Create
+        // POST: Recommendations/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([Bind(include: "Id, Title, ShortDescription, Description, Category")] Recommendation model)
+        public async Task<IActionResult> Edit([Bind(include: "Id, Title, ShortDescription, Description, Category")] Recommendation model)
         {
             if (ModelState.IsValid)
             {
-                bool result = false;
+                Recommendation result = null;
                 if (string.IsNullOrEmpty(model.Id))
-                {
+                {                    
+                    model.OwnerId = HttpContext.User.GetUserId();
                     model.Id = Guid.NewGuid().ToString();
                     model.PostedOn = DateTime.Now;
-                    model.Modified = DateTime.Now;
-                    model.OwnerId = HttpContext.User.GetUserId();
-                    result = _repository.Create(model);
+                    model.ModifiedOn = DateTime.Now;
+                    result = await repository.CreateAsync(model);
                 }
                 else
                 {
-                    model.Modified = DateTime.Now;
-                    result = _repository.Update(model);
+                    result = await repository.UpdateAsync(model);
                 }
-                TempData["opertionResult"] = result ? "Your recommendation saved" : "Error";
             }
-            return View();
+            return RedirectToAction("Index");
         }
 
-        //GET: Recommendations/Edit/5
-        //public IActionResult Edit(string id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-
-        //    Recommendation recommendation = _context.Recommendation.Single(m => m.Id == id);
-        //    if (recommendation == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-        //    return View(recommendation);
-        //}
-
-        //POST: Recommendations/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult Edit(Recommendation recommendation)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Update(recommendation);
-        //        _context.SaveChanges();
-        //        return RedirectToAction("Index");
-        //    }
-        //    return View(recommendation);
-        //}
+        //POST: Recommendations/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string Id)
+        {
+            var result = await repository.DeleteAsync(Id);
+            TempData["opertionResult"] = (result != null) ? string.Format("Recommendation \"{0}\" deleted.", result.Title) : "Error";
+            return RedirectToAction("Index");
+        }
 
         //GET: Recommendations/Delete/5
-        //[ActionName("Delete")]
-        //public IActionResult Delete(string id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
+        [ActionName("Delete")]
+        public async Task<IActionResult> Delete(string Id)
+        {
+            if (Id == null)
+            {
+                return HttpNotFound();
+            }
 
-        //    Recommendation recommendation = _context.Recommendation.Single(m => m.Id == id);
-        //    if (recommendation == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
-
-        //    return View(recommendation);
-        //}
-
-        //POST: Recommendations/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult DeleteConfirmed(string id)
-        //{
-        //    Recommendation recommendation = _context.Recommendation.Single(m => m.Id == id);
-        //    _context.Recommendation.Remove(recommendation);
-        //    _context.SaveChanges();
-        //    return RedirectToAction("Index");
-        //}       
+            var recommendation = await repository.GetAsync(Id);
+            if (recommendation == null)
+            {
+                return HttpNotFound();
+            }
+            return PartialView("_DeleteConfirmPartial", recommendation);
+        }
     }
 }

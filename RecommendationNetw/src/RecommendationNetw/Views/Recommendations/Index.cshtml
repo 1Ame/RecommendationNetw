@@ -9,10 +9,18 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
+</div>
+
 <table class="table">
     <tr>
         <th>
             Name
+        </th> 
+        <th>
+            Short description
         </th>   
         <th></th>     
     </tr>
@@ -21,12 +29,15 @@
 {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Title)
-        </td>        
+            <label  class="control-label">@item.Title</label>
+        </td>   
+        <td>
+            <label class="control-label">@item.ShortDescription</label>
+        </td>       
         <td>
             <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
             <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            <a asp-action="Delete" asp-route-id="@item.Id" class="deleteButton">Delete</a>
         </td>
     </tr>
 }
@@ -64,4 +75,4 @@
         }
     </ul>
     }
-}
+
