@@ -10,9 +10,11 @@ using RecommendationNetw.ViewModels.Recommendations;
 using System;
 using Microsoft.AspNet.Identity;
 using System.Security.Claims;
+using Microsoft.AspNet.Authorization;
 
 namespace RecommendationNetw.Controllers
 {
+    [Authorize]
     public class RecommendationsController : Controller
     {
         private readonly IRepository<Recommendation, string> repository = null;
@@ -23,17 +25,20 @@ namespace RecommendationNetw.Controllers
         }
 
         // GET: Recommendations
-        public async Task<IActionResult> Index(int? page)
+        public IActionResult Index()
+        {            
+            return View();
+        }
+        
+        //Get: Ajax paging request
+        public IActionResult GetData(int? page)
         {
-            var items = await repository.GetAllAsync(x => x.OwnerId == HttpContext.User.GetUserId());
-            var pagingInfo = new PagingInfo(items.Count(), page,1);
-
-            var model = new IndexViewModel()
+            if (Request.IsAjaxRequest())
             {
-                Items = items.Skip((pagingInfo.CurrentPage - 1) * pagingInfo.PageSize).Take(pagingInfo.PageSize),
-                PagingInfo = pagingInfo
-            };
-            return View(model);
+                return ViewComponent("RecomList", page);
+            }
+
+            return HttpNotFound();
         }
 
         // GET: Recommendations/Details/5
@@ -112,7 +117,6 @@ namespace RecommendationNetw.Controllers
         }
 
         //GET: Recommendations/Delete/5
-        [ActionName("Delete")]
         public async Task<IActionResult> Delete(string Id)
         {
             if (Id == null)

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RecommendationNetw.ViewModels.Recommendations
 {
-    public class IndexViewModel
+    public class ListViewModel
     {
         public IEnumerable<Recommendation> Items { get; set; }
         public PagingInfo PagingInfo { get; set; }

@@ -17,6 +17,11 @@ namespace RecommendationNetw.Repositories
             context = Сontext;
         }
 
+        public IQueryable<Recommendation> Items
+        {
+            get { return context.Recommendations; }
+        }            
+
         public async Task<IEnumerable<Recommendation>> GetAllAsync()
         {
             return await context.Recommendations.ToListAsync();
@@ -65,12 +70,5 @@ namespace RecommendationNetw.Repositories
             }
             return dbEntry;
         }
-        public async Task<int> CountAsync()
-        {
-            return await context.Recommendations.CountAsync();
-        }
-
-
-
     }
 }

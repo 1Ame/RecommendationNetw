@@ -17,6 +17,10 @@ textarea {
     max-width: 280px;
 }
 
+.form-horizontal .control-label.left-text{
+   text-align:left !important; 
+}
+
 /* Carousel */
 .carousel-caption {
     z-index: 10 !important;

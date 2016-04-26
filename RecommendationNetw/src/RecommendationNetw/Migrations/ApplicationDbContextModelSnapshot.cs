@@ -102,11 +102,11 @@ namespace RecommendationNetw.Migrations
                 {
                     b.Property<string>("Id");
 
-                    b.Property<int>("Mark");
-
                     b.Property<string>("OwnerId");
 
                     b.Property<string>("QuestionId");
+
+                    b.Property<int>("Value");
 
                     b.HasKey("Id");
                 });
@@ -163,9 +163,10 @@ namespace RecommendationNetw.Migrations
                 {
                     b.Property<string>("Id");
 
-                    b.Property<int>("OrderNum");
+                    b.Property<int>("Aspect");
 
-                    b.Property<string>("Text");
+                    b.Property<string>("Text")
+                        .IsRequired();
 
                     b.HasKey("Id");
                 });

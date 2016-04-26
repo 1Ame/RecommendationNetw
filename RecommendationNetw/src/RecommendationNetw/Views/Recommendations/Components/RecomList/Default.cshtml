@@ -1,0 +1,31 @@
+@model RecommendationNetw.ViewModels.Recommendations.ListViewModel
+
+<table class="table content" id="content">
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Short description
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Items)
+    {
+        <tr>
+            <td>
+                <label class="control-label">@item.Title</label>
+            </td>
+            <td>
+                <label class="control-label">@item.ShortDescription</label>
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id" class="deleteButton">Delete</a>
+            </td>
+        </tr>
+    }
+</table>
+@Component.Invoke("Pagination", "GetData", "#results", Model.PagingInfo)
