@@ -7,11 +7,11 @@ namespace RecommendationNetw.Helpers
 {
     public class PagingInfo
     {
-        public PagingInfo(int totalItems, int? page, int pageSize = 10)
+        public PagingInfo(int totalItems, int page = 1, int pageSize = 10)
         {
             // calculate total, start and end pages
             var totalPages = (int)Math.Ceiling((decimal)totalItems / pageSize);
-            var currentPage = page != null ? (int)page : 1;
+            var currentPage = page;
             var startPage = currentPage - 5;
             var endPage = currentPage + 4;
             if (startPage <= 0)

@@ -1,4 +1,4 @@
-@model RecommendationNetw.ViewModels.Recommendations.ListViewModel
+@model int
 
 @{
     ViewData["Title"] = "Index";
@@ -14,41 +14,13 @@
     <div id="dialogContent" class="modal-dialog"></div>
 </div>
 
-@*<form asp-action="Index" data-ajax-url="@Html." id="form0" method="post" data-ajax="true" data-ajax-mode="replace" data-ajax-update="#results">
-    <input type="submit"/>
-</form>*@
 <div id="results">
-    @await Component.InvokeAsync("RecomList", 0)
+    @if (TempData["opertionResult"] != null)
+    {
+        <h3>@TempData["opertionResult"]</h3>
+    }
+    @await Component.InvokeAsync("RecomList", Model)
 </div>
 
-    @*<table class="table content" id="content">
-            <tr>
-                <th>
-                    Name
-                </th>
-                <th>
-                    Short description
-                </th>
-                <th></th>
-            </tr>
-
-        @foreach (var item in Model.Items)
-        {
-            <tr>
-                <td>
-                    <label  class="control-label">@item.Title</label>
-                </td>
-                <td>
-                    <label class="control-label">@item.ShortDescription</label>
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="deleteButton">Delete</a>
-                </td>
-            </tr>}
-        </table>*@
-
-    
     
 

@@ -25,19 +25,18 @@ namespace RecommendationNetw.Controllers
         }
 
         // GET: Recommendations
-        public IActionResult Index()
+        public IActionResult Index(int page = 1)
         {            
-            return View();
+            return View(page);
         }
         
         //Get: Ajax paging request
-        public IActionResult GetData(int? page)
+        public IActionResult GetData(int page = 1)
         {
             if (Request.IsAjaxRequest())
             {
                 return ViewComponent("RecomList", page);
             }
-
             return HttpNotFound();
         }
 
@@ -49,7 +48,7 @@ namespace RecommendationNetw.Controllers
                 return HttpNotFound();
             }
 
-            Recommendation recommendation = await repository.GetAsync(id);
+            var recommendation = await repository.GetAsync(id);
             if (recommendation == null)
             {
                 return HttpNotFound();
@@ -89,19 +88,18 @@ namespace RecommendationNetw.Controllers
         {
             if (ModelState.IsValid)
             {
-                Recommendation result = null;
+                bool result = false;
                 if (string.IsNullOrEmpty(model.Id))
                 {                    
-                    model.OwnerId = HttpContext.User.GetUserId();
-                    model.Id = Guid.NewGuid().ToString();
-                    model.PostedOn = DateTime.Now;
-                    model.ModifiedOn = DateTime.Now;
+                    model.OwnerId = HttpContext.User.GetUserId();                   
                     result = await repository.CreateAsync(model);
                 }
                 else
                 {
                     result = await repository.UpdateAsync(model);
                 }
+
+                TempData["opertionResult"] = (result) ? "Recommendation saved." : "Some Error Message";
             }
             return RedirectToAction("Index");
         }
@@ -112,7 +110,7 @@ namespace RecommendationNetw.Controllers
         public async Task<IActionResult> DeleteConfirmed(string Id)
         {
             var result = await repository.DeleteAsync(Id);
-            TempData["opertionResult"] = (result != null) ? string.Format("Recommendation \"{0}\" deleted.", result.Title) : "Error";
+            TempData["opertionResult"] = (result) ? "Recommendation deleted.": "Some Error Message";
             return RedirectToAction("Index");
         }
 

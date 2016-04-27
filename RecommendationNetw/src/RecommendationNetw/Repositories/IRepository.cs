@@ -13,8 +13,8 @@ namespace RecommendationNetw.Repositories
         Task<IEnumerable<T>> GetAllAsync();
         Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> prediacte);
         Task<T> GetAsync(Tkey Id);
-        Task<T> CreateAsync(T item);
-        Task<T> UpdateAsync(T item);
-        Task<T> DeleteAsync(Tkey Id);
+        Task<bool> CreateAsync(T item);
+        Task<bool> UpdateAsync(T item);
+        Task<bool> DeleteAsync(Tkey Id);
     }
 }

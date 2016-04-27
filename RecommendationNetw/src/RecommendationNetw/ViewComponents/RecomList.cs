@@ -24,7 +24,7 @@ namespace RecommendationNetw.ViewComponents
         public async Task<IViewComponentResult> InvokeAsync(int page = 1)
         {
             var items = await repository.GetAllAsync(x => x.OwnerId == HttpContext.User.GetUserId());
-            var pagingInfo = new PagingInfo(items.Count(), page, 1);
+            var pagingInfo = new PagingInfo(items.Count(), page, 3);
 
             var model = new ListViewModel()
             {

@@ -34,41 +34,69 @@ namespace RecommendationNetw.Repositories
         {
             return await context.Recommendations.FirstOrDefaultAsync(x=>x.Id == Id);
         }
-        public async Task<Recommendation> CreateAsync(Recommendation item)
-        {            
-            context.Recommendations.Add(item);
-            await context.SaveChangesAsync();
-            return item;            
-        }
-        public async Task<Recommendation> UpdateAsync(Recommendation item)
+        public async Task<bool> CreateAsync(Recommendation item)
         {
-            
             if (item == null)
-                return null;
+                return false;
+
+            item.Id = Guid.NewGuid().ToString();
+            item.PostedOn = DateTime.Now;
+            item.ModifiedOn = DateTime.Now;
+
+            try
+            {
+                context.Recommendations.Add(item);
+                await context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }            
+        }
+        public async Task<bool> UpdateAsync(Recommendation item)
+        {
+            if (item == null)
+                return false;
                  
             var dbEntry = await context.Recommendations.FirstOrDefaultAsync(x => x.Id == item.Id);
 
-            if (dbEntry != null)
-            {                
-                dbEntry.Title = item.Title;
-                dbEntry.Description = item.Description;
-                dbEntry.ShortDescription = item.ShortDescription;
-                dbEntry.Category = item.Category;
-                dbEntry.ModifiedOn = DateTime.Now;
+            if (dbEntry == null)
+                return false;
+                                       
+            dbEntry.Title = item.Title;
+            dbEntry.Description = item.Description;
+            dbEntry.ShortDescription = item.ShortDescription;
+            dbEntry.Category = item.Category;
+            dbEntry.ModifiedOn = DateTime.Now;
 
+            try
+            {
                 await context.SaveChangesAsync();
+                return true;
             }
-            return dbEntry;            
+            catch
+            {
+                return false;
+            }        
         }
-        public async Task<Recommendation> DeleteAsync(string Id)
+        public async Task<bool> DeleteAsync(string Id)
         {
             var dbEntry = context.Recommendations.FirstOrDefault(x => x.Id == Id);
-            if (dbEntry != null)
+
+            if (dbEntry == null)
+                return false;
+
+            try
             {
                 context.Recommendations.Remove(dbEntry);
                 await context.SaveChangesAsync();
+                return true;
             }
-            return dbEntry;
-        }
+            catch
+            {
+                return false;
+            }           
+        }        
     }
 }

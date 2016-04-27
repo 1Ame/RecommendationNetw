@@ -22,7 +22,7 @@ namespace RecommendationNetw.Controllers
         }
 
         // GET: Recommendations1
-        public async Task<IActionResult> Index(int? page)
+        public async Task<IActionResult> Index(int page = 1)
         {
             var items = (await repository.GetAllAsync(x => x.IsModerated == false)).OrderBy(x => x.Owner);
             var pagingInfo = new PagingInfo(items.Count(), page, 1);
