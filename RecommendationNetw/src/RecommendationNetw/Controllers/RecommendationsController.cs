@@ -17,28 +17,27 @@ namespace RecommendationNetw.Controllers
     [Authorize]
     public class RecommendationsController : Controller
     {
-        private readonly IRepository<Recommendation, string> repository = null;
+        private readonly IRepository<Recommendation, string> _repository = null;
 
-        public RecommendationsController(IRepository<Recommendation, string> Repository)
+        public RecommendationsController(IRepository<Recommendation, string> repository)
         {
-            repository = Repository;
+            _repository = repository;
         }
 
         // GET: Recommendations
-        public IActionResult Index(int page = 1)
-        {            
-            return View(page);
-        }
-        
-        //Get: Ajax paging request
-        public IActionResult GetData(int page = 1)
+        public async Task<IActionResult> Index(int page = 1)
         {
-            if (Request.IsAjaxRequest())
+            var items = await _repository.GetAllAsync(x => x.OwnerId == HttpContext.User.GetUserId());
+            var pagingInfo = new PagingInfo(items.Count(), page, 3);
+
+            var model = new ListViewModel()
             {
-                return ViewComponent("RecomList", page);
-            }
-            return HttpNotFound();
-        }
+                Items = items.Skip((pagingInfo.CurrentPage - 1) * pagingInfo.PageSize).Take(pagingInfo.PageSize),
+                PagingInfo = pagingInfo
+            };
+
+            return View(model);
+        }        
 
         // GET: Recommendations/Details/5
         public async Task<IActionResult> Details(string id)
@@ -48,7 +47,7 @@ namespace RecommendationNetw.Controllers
                 return HttpNotFound();
             }
 
-            var recommendation = await repository.GetAsync(id);
+            var recommendation = await _repository.GetAsync(id);
             if (recommendation == null)
             {
                 return HttpNotFound();
@@ -72,7 +71,7 @@ namespace RecommendationNetw.Controllers
                 return HttpNotFound();
             }
 
-            var model = await  repository.GetAsync(Id);
+            var model = await  _repository.GetAsync(Id);
             if (model == null)
             {
                 return HttpNotFound();
@@ -92,11 +91,11 @@ namespace RecommendationNetw.Controllers
                 if (string.IsNullOrEmpty(model.Id))
                 {                    
                     model.OwnerId = HttpContext.User.GetUserId();                   
-                    result = await repository.CreateAsync(model);
+                    result = await _repository.CreateAsync(model);
                 }
                 else
                 {
-                    result = await repository.UpdateAsync(model);
+                    result = await _repository.UpdateAsync(model);
                 }
 
                 TempData["opertionResult"] = (result) ? "Recommendation saved." : "Some Error Message";
@@ -109,7 +108,7 @@ namespace RecommendationNetw.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string Id)
         {
-            var result = await repository.DeleteAsync(Id);
+            var result = await _repository.DeleteAsync(Id);
             TempData["opertionResult"] = (result) ? "Recommendation deleted.": "Some Error Message";
             return RedirectToAction("Index");
         }
@@ -122,12 +121,12 @@ namespace RecommendationNetw.Controllers
                 return HttpNotFound();
             }
 
-            var recommendation = await repository.GetAsync(Id);
+            var recommendation = await _repository.GetAsync(Id);
             if (recommendation == null)
             {
                 return HttpNotFound();
             }
-            return PartialView("_DeleteConfirmPartial", recommendation);
+            return PartialView("_DeleteConfirm", recommendation);
         }
     }
 }

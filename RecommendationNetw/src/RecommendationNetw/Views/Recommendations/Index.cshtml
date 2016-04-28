@@ -1,11 +1,15 @@
-@model int
+@model RecommendationNetw.ViewModels.Recommendations.ListViewModel
+
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <h2>Index</h2>
-
+@if (TempData["opertionResult"] != null)
+{
+    <h3></h3>
+}
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -14,13 +18,35 @@
     <div id="dialogContent" class="modal-dialog"></div>
 </div>
 
-<div id="results">
-    @if (TempData["opertionResult"] != null)
+<table class="table content" id="content">
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Short description
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Items)
     {
-        <h3>@TempData["opertionResult"]</h3>
+        <tr>
+            <td>
+                <label class="control-label">@item.Title</label>
+            </td>
+            <td>
+                <label class="control-label">@item.ShortDescription</label>
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id" class="deleteButton">Delete</a>
+            </td>
+        </tr>
     }
-    @await Component.InvokeAsync("RecomList", Model)
-</div>
+</table>
+@Component.Invoke("Pagination", "Index", Model.PagingInfo)
 
     
 

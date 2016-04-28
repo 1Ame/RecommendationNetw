@@ -12,10 +12,9 @@ namespace RecommendationNetw.ViewComponents
 {
     public class Pagination : ViewComponent
     {
-        public IViewComponentResult Invoke(string ajaxAction, string ReplaceId, PagingInfo pagingInfo)
+        public IViewComponentResult Invoke(string Action, PagingInfo pagingInfo)
         {
-            ViewBag.AjaxAction = ajaxAction;
-            ViewBag.ReplaceId = ReplaceId; 
+            ViewBag.Action = Action;
             return View(pagingInfo);
         }
     }
