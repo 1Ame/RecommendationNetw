@@ -14,17 +14,16 @@ namespace RecommendationNetw.Controllers
     
     public class ModerController : Controller
     {
-        private  readonly IRepository<Recommendation, string> repository = null ;
+        private  readonly IRepository<Recommendation, string> _repository = null ;
 
-        public ModerController(IRepository<Recommendation, string> Repository)
+        public ModerController(IRepository<Recommendation, string> repository)
         {
-            repository = Repository;    
+            _repository = repository;    
         }
-
-        // GET: Recommendations1
+                
         public async Task<IActionResult> Index(int page = 1)
         {
-            var items = (await repository.GetAllAsync(x => x.IsModerated == false)).OrderBy(x => x.Owner);
+            var items = (await _repository.GetAllAsync(x => x.IsModerated == false)).OrderBy(x => x.Owner);
             var pagingInfo = new PagingInfo(items.Count(), page, 1);
 
             var model = new ListViewModel()
@@ -33,9 +32,6 @@ namespace RecommendationNetw.Controllers
                 PagingInfo = pagingInfo
             };
             return View(model);
-        }
-
-        // GET: Recommendations1/Details/5
-        
+        }        
     }
 }

@@ -62,8 +62,10 @@ namespace RecommendationNetw
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
-            services.AddTransient<IRepository<Recommendation, string>, RecommendationsRepository>();
-            services.AddTransient<IRepository<Question, string>, QuestionsRepository>();
+            services.AddTransient<IRepository<Recommendation, Guid>, RecommendationsRepository>();
+            services.AddTransient<IRepository<Question, Guid>, QuestionsRepository>();
+            services.AddTransient<IRepository<Questionary, Guid>, QuestionnariesRepository>();
+
 
 
         }

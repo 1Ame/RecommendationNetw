@@ -1,0 +1,42 @@
+@model List<RecommendationNetw.ViewModels.Questions.IndexViewModel>
+
+@{
+    ViewData["Title"] = "View";
+}
+
+<h2>View</h2>
+
+<form asp-action="View">
+    <div class="form-horizontal">
+        <h4>Questionary</h4>
+        <hr />
+        <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
+
+        @for (int i = 0; i < Model.Count; i++)
+        {            
+            @Html.HiddenFor(x=>x[i].QuestionId)
+            <label class="col-md-4 control-label">@Model[i].QuestionText</label>
+            <div class="form-group">
+                <div class="col-md-10">
+                    <select asp-for="@Model[i].TextAnswer" asp-items="Html.GetEnumSelectList<TextAnswer>()" class="form-control"></select>
+                    <span asp-validation-for="@Model[i].TextAnswer" class="text-danger" />
+                </div>
+            </div>
+        }
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

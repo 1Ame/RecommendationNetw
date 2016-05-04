@@ -1,21 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace RecommendationNetw.Models
 {
-    public class Question
+    public class Questionary
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        [Required]
-        public string Text { get; set; }
+        public string OwnerId { get; set; }
+        public ApplicationUser Owner { get; set; }
 
-        [Required]
-        public Aspect Aspect { get; set; }
+        public virtual List<Answer> Answers { get; set; }
     }
-
-    public enum Aspect { aspect1, aspect2, aspect3, asect4};
 }

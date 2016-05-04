@@ -103,7 +103,7 @@ namespace RecommendationNetw.Controllers
             {
                 var user = new ApplicationUser { UserName = model.Login, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);                
-                var roleResult = await _userManager.AddToRoleAsync(user, "user");
+                //var roleResult = await _userManager.AddToRoleAsync(user, "user");
                 if (result.Succeeded)
                 {
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713

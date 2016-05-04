@@ -17,9 +17,9 @@ namespace RecommendationNetw.Controllers
     [Authorize]
     public class RecommendationsController : Controller
     {
-        private readonly IRepository<Recommendation, string> _repository = null;
+        private readonly IRepository<Recommendation, Guid> _repository = null;
 
-        public RecommendationsController(IRepository<Recommendation, string> repository)
+        public RecommendationsController(IRepository<Recommendation, Guid> repository)
         {
             _repository = repository;
         }
@@ -27,7 +27,7 @@ namespace RecommendationNetw.Controllers
         // GET: Recommendations
         public async Task<IActionResult> Index(int page = 1)
         {
-            var items = await _repository.GetAllAsync(x => x.OwnerId == HttpContext.User.GetUserId());
+            var items = await _repository.GetAllAsync(x => x.OwnerId.Equals(User.GetUserId()));
             var pagingInfo = new PagingInfo(items.Count(), page, 3);
 
             var model = new ListViewModel()
@@ -40,14 +40,14 @@ namespace RecommendationNetw.Controllers
         }        
 
         // GET: Recommendations/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(Guid Id)
         {
-            if (id == null)
+            if (Id == null)
             {
                 return HttpNotFound();
             }
 
-            var recommendation = await _repository.GetAsync(id);
+            var recommendation = await _repository.GetAsync(Id);
             if (recommendation == null)
             {
                 return HttpNotFound();
@@ -64,7 +64,7 @@ namespace RecommendationNetw.Controllers
         }
 
         // GET: Recommendations/Edit/Id
-        public async Task<IActionResult> Edit(string Id)
+        public async Task<IActionResult> Edit(Guid Id)
         {
             if (Id == null)
             {
@@ -88,9 +88,9 @@ namespace RecommendationNetw.Controllers
             if (ModelState.IsValid)
             {
                 bool result = false;
-                if (string.IsNullOrEmpty(model.Id))
+                if (model.Id.Equals(Guid.Empty))
                 {                    
-                    model.OwnerId = HttpContext.User.GetUserId();                   
+                    model.OwnerId = User.GetUserId();                   
                     result = await _repository.CreateAsync(model);
                 }
                 else
@@ -106,7 +106,7 @@ namespace RecommendationNetw.Controllers
         //POST: Recommendations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string Id)
+        public async Task<IActionResult> DeleteConfirmed(Guid Id)
         {
             var result = await _repository.DeleteAsync(Id);
             TempData["opertionResult"] = (result) ? "Recommendation deleted.": "Some Error Message";
@@ -114,7 +114,7 @@ namespace RecommendationNetw.Controllers
         }
 
         //GET: Recommendations/Delete/5
-        public async Task<IActionResult> Delete(string Id)
+        public async Task<IActionResult> Delete(Guid Id)
         {
             if (Id == null)
             {

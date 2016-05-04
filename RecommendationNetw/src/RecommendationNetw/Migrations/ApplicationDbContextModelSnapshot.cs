@@ -100,11 +100,14 @@ namespace RecommendationNetw.Migrations
 
             modelBuilder.Entity("RecommendationNetw.Models.Answer", b =>
                 {
-                    b.Property<string>("Id");
-
-                    b.Property<string>("OwnerId");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("QuestionId");
+
+                    b.Property<Guid?>("QuestionId1");
+
+                    b.Property<Guid?>("QuestionaryId");
 
                     b.Property<int>("Value");
 
@@ -141,6 +144,8 @@ namespace RecommendationNetw.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
+                    b.Property<string>("QuestionaryId");
+
                     b.Property<string>("SecurityStamp");
 
                     b.Property<bool>("TwoFactorEnabled");
@@ -161,7 +166,8 @@ namespace RecommendationNetw.Migrations
 
             modelBuilder.Entity("RecommendationNetw.Models.Question", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("Aspect");
 
@@ -171,9 +177,20 @@ namespace RecommendationNetw.Migrations
                     b.HasKey("Id");
                 });
 
+            modelBuilder.Entity("RecommendationNetw.Models.Questionary", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("OwnerId");
+
+                    b.HasKey("Id");
+                });
+
             modelBuilder.Entity("RecommendationNetw.Models.Recommendation", b =>
                 {
-                    b.Property<string>("Id");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("Category");
 
@@ -232,13 +249,20 @@ namespace RecommendationNetw.Migrations
 
             modelBuilder.Entity("RecommendationNetw.Models.Answer", b =>
                 {
-                    b.HasOne("RecommendationNetw.Models.ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("OwnerId");
-
                     b.HasOne("RecommendationNetw.Models.Question")
                         .WithMany()
-                        .HasForeignKey("QuestionId");
+                        .HasForeignKey("QuestionId1");
+
+                    b.HasOne("RecommendationNetw.Models.Questionary")
+                        .WithMany()
+                        .HasForeignKey("QuestionaryId");
+                });
+
+            modelBuilder.Entity("RecommendationNetw.Models.Questionary", b =>
+                {
+                    b.HasOne("RecommendationNetw.Models.ApplicationUser")
+                        .WithOne()
+                        .HasForeignKey("RecommendationNetw.Models.Questionary", "OwnerId");
                 });
 
             modelBuilder.Entity("RecommendationNetw.Models.Recommendation", b =>

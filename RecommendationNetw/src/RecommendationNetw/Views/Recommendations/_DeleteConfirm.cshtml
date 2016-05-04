@@ -4,16 +4,22 @@
     <div class="modal-header">
         <button class="close" data-dismiss="modal" area-hidden="true">X</button>
         <h4>Are you sure?</h4>
-    </div>
+    </div>  
     <div class="modal-body">
         <dl class="dl-horizontal">
-            <dt>@Html.LabelFor(model=>model.Title)</dt>
+            <dt>@Html.DisplayNameFor(model => model.Title)</dt>
             <dd>@Html.DisplayFor(model => model.Title)</dd>
 
-            <dt>@Html.LabelFor(model=>model.ShortDescription)</dt>
+            <dt>@Html.DisplayNameFor(model => model.ShortDescription)</dt>
             <dd>@Html.DisplayFor(model => model.ShortDescription)</dd>
+
+            <dt>@Html.DisplayNameFor(model => model.PostedOn)</dt>
+            <dd>@Html.DisplayFor(model => model.PostedOn)</dd>
+
+            <dt>@Html.DisplayNameFor(model => model.Category)</dt>
+            <dd class="text-truncate">@Html.DisplayFor(model => model.Category)</dd>
         </dl>
-    </div>
+    </div>  
 
     <div class="modal-footer">
         <form asp-controller="Recommendations" asp-action="Delete" method="post">

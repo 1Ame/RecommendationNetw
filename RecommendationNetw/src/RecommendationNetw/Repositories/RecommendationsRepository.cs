@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RecommendationNetw.Repositories
 {
-    public class RecommendationsRepository : IRepository<Recommendation, string>
+    public class RecommendationsRepository : IRepository<Recommendation, Guid>
     {
         private readonly ApplicationDbContext context = null;
 
@@ -30,16 +30,15 @@ namespace RecommendationNetw.Repositories
         {
             return await context.Recommendations.Where(predicate).ToListAsync();
         }
-        public async Task<Recommendation> GetAsync(string Id)
+        public async Task<Recommendation> GetAsync(Guid Id)
         {
-            return await context.Recommendations.FirstOrDefaultAsync(x=>x.Id == Id);
+            return await context.Recommendations.FirstOrDefaultAsync(x=>x.Id.Equals(Id));
         }
         public async Task<bool> CreateAsync(Recommendation item)
         {
             if (item == null)
                 return false;
 
-            item.Id = Guid.NewGuid().ToString();
             item.PostedOn = DateTime.Now;
             item.ModifiedOn = DateTime.Now;
 
@@ -59,7 +58,7 @@ namespace RecommendationNetw.Repositories
             if (item == null)
                 return false;
                  
-            var dbEntry = await context.Recommendations.FirstOrDefaultAsync(x => x.Id == item.Id);
+            var dbEntry = await context.Recommendations.FirstOrDefaultAsync(x => x.Id.Equals(item.Id));
 
             if (dbEntry == null)
                 return false;
@@ -80,9 +79,9 @@ namespace RecommendationNetw.Repositories
                 return false;
             }        
         }
-        public async Task<bool> DeleteAsync(string Id)
+        public async Task<bool> DeleteAsync(Guid Id)
         {
-            var dbEntry = context.Recommendations.FirstOrDefault(x => x.Id == Id);
+            var dbEntry = context.Recommendations.FirstOrDefault(x => x.Id.Equals(Id));
 
             if (dbEntry == null)
                 return false;

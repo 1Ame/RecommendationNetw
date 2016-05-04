@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
 using Microsoft.Data.Entity.Metadata;
@@ -11,13 +8,13 @@ using RecommendationNetw.Models;
 namespace RecommendationNetw.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("00000000000000_CreateIdentitySchema")]
-    partial class CreateIdentitySchema
+    [Migration("20160504161552_migration1")]
+    partial class migration1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0-beta8")
+                .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRole", b =>
@@ -50,7 +47,8 @@ namespace RecommendationNetw.Migrations
 
                     b.Property<string>("ClaimValue");
 
-                    b.Property<string>("RoleId");
+                    b.Property<string>("RoleId")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
@@ -66,7 +64,8 @@ namespace RecommendationNetw.Migrations
 
                     b.Property<string>("ClaimValue");
 
-                    b.Property<string>("UserId");
+                    b.Property<string>("UserId")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
@@ -81,7 +80,8 @@ namespace RecommendationNetw.Migrations
 
                     b.Property<string>("ProviderDisplayName");
 
-                    b.Property<string>("UserId");
+                    b.Property<string>("UserId")
+                        .IsRequired();
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -97,6 +97,22 @@ namespace RecommendationNetw.Migrations
                     b.HasKey("UserId", "RoleId");
 
                     b.HasAnnotation("Relational:TableName", "AspNetUserRoles");
+                });
+
+            modelBuilder.Entity("RecommendationNetw.Models.Answer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("QuestionId");
+
+                    b.Property<Guid?>("QuestionId1");
+
+                    b.Property<Guid?>("QuestionaryId");
+
+                    b.Property<int>("Value");
+
+                    b.HasKey("Id");
                 });
 
             modelBuilder.Entity("RecommendationNetw.Models.ApplicationUser", b =>
@@ -129,6 +145,8 @@ namespace RecommendationNetw.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
+                    b.Property<string>("QuestionaryId");
+
                     b.Property<string>("SecurityStamp");
 
                     b.Property<bool>("TwoFactorEnabled");
@@ -145,6 +163,57 @@ namespace RecommendationNetw.Migrations
                         .HasAnnotation("Relational:Name", "UserNameIndex");
 
                     b.HasAnnotation("Relational:TableName", "AspNetUsers");
+                });
+
+            modelBuilder.Entity("RecommendationNetw.Models.Question", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Aspect");
+
+                    b.Property<string>("Text")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+                });
+
+            modelBuilder.Entity("RecommendationNetw.Models.Questionary", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("OwnerId");
+
+                    b.HasKey("Id");
+                });
+
+            modelBuilder.Entity("RecommendationNetw.Models.Recommendation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Category");
+
+                    b.Property<string>("Description")
+                        .IsRequired();
+
+                    b.Property<bool>("IsModerated");
+
+                    b.Property<DateTime>("ModifiedOn");
+
+                    b.Property<string>("OwnerId");
+
+                    b.Property<DateTime>("PostedOn");
+
+                    b.Property<string>("ShortDescription")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 100);
+
+                    b.Property<string>("Title")
+                        .IsRequired();
+
+                    b.HasKey("Id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNet.Identity.EntityFramework.IdentityRoleClaim<string>", b =>
@@ -177,6 +246,31 @@ namespace RecommendationNetw.Migrations
                     b.HasOne("RecommendationNetw.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("RecommendationNetw.Models.Answer", b =>
+                {
+                    b.HasOne("RecommendationNetw.Models.Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId1");
+
+                    b.HasOne("RecommendationNetw.Models.Questionary")
+                        .WithMany()
+                        .HasForeignKey("QuestionaryId");
+                });
+
+            modelBuilder.Entity("RecommendationNetw.Models.Questionary", b =>
+                {
+                    b.HasOne("RecommendationNetw.Models.ApplicationUser")
+                        .WithOne()
+                        .HasForeignKey("RecommendationNetw.Models.Questionary", "OwnerId");
+                });
+
+            modelBuilder.Entity("RecommendationNetw.Models.Recommendation", b =>
+                {
+                    b.HasOne("RecommendationNetw.Models.ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("OwnerId");
                 });
         }
     }

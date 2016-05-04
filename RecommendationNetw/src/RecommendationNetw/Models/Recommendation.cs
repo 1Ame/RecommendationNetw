@@ -2,16 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace RecommendationNetw.Models
 {
     public class Recommendation
-    {        
+    {
         [Key]
-        [HiddenInput(DisplayValue = false)]
-        public string Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]        
+        public Guid Id { get; set; }
 
         [Required]
         [Display(Name = "Title")]
@@ -32,14 +33,15 @@ namespace RecommendationNetw.Models
         [Display(Name = "Category")]
         public Category Category { get; set; }
 
+        [DataType(DataType.DateTime)]
         public DateTime PostedOn { get; set; }
 
+        [DataType(DataType.DateTime)]
         public DateTime ModifiedOn { get; set; }
 
         public bool IsModerated { get; set; }
         
         public string OwnerId { get; set; }
-
         public ApplicationUser Owner { get; set; }        
 
         //public virtual List<Tag> Tags { get; set; }
