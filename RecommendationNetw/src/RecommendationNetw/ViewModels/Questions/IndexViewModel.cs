@@ -12,6 +12,5 @@ namespace RecommendationNetw.ViewModels.Questions
 
         public string QuestionId { get; set; }
 
-        public TextAnswer TextAnswer { get; set; }
     }
 }

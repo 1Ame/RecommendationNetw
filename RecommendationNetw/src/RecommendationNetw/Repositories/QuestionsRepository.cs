@@ -9,39 +9,39 @@ using System.Threading.Tasks;
 
 namespace RecommendationNetw.Repositories
 {
-    public class QuestionnariesRepository : IRepository<Questionary, Guid>, IQuestionary<Question>
+    public class QuestionsRepository : IRepository<Question, Guid>
     {
         private readonly ApplicationDbContext _context = null;
 
-        public QuestionnariesRepository(ApplicationDbContext context)
+        public QuestionsRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public IQueryable<Questionary> Items
+        public IQueryable<Question> Items
         {
-            get { return _context.Questionnaires; }
+            get { return _context.Questions; }
         }
-        public async Task<IEnumerable<Questionary>> GetAllAsync()
+        public async Task<IEnumerable<Question>> GetAllAsync()
         {
-            return await _context.Questionnaires.ToListAsync();
+            return await _context.Questions.ToListAsync();
         }
-        public async Task<IEnumerable<Questionary>> GetAllAsync(Expression<Func<Questionary, bool>> predicate)
+        public async Task<IEnumerable<Question>> GetAllAsync(Expression<Func<Question, bool>> predicate)
         {
-            return await _context.Questionnaires.Where(predicate).ToListAsync();
+            return await _context.Questions.Where(predicate).ToListAsync();
         }
-        public async Task<Questionary> GetAsync(Guid Id)
+        public async Task<Question> GetAsync(Guid Id)
         {
-            return await _context.Questionnaires.FirstOrDefaultAsync(x => x.Id.Equals(Id));
+            return await _context.Questions.FirstOrDefaultAsync(x => x.Id.Equals(Id));
         }
-        public async Task<bool> CreateAsync(Questionary item)
+        public async Task<bool> CreateAsync(Question item)
         {
             if (item == null)
-                return false;                
+                return false;
 
             try
             {
-                _context.Questionnaires.Add(item);
+                _context.Questions.Add(item);
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -50,17 +50,18 @@ namespace RecommendationNetw.Repositories
                 return false;
             }
         }
-        public async Task<bool> UpdateAsync(Questionary item)
+        public async Task<bool> UpdateAsync(Question item)
         {
             if (item == null)
                 return false;
 
-            var dbEntry = await _context.Questionnaires.FirstOrDefaultAsync(x => x.Id.Equals(item.Id));
+            var dbEntry = await _context.Questions.FirstOrDefaultAsync(x => x.Id == item.Id);
 
             if (dbEntry == null)
                 return false;
 
-            dbEntry.Answers = item.Answers;           
+            dbEntry.Category = item.Category;
+            dbEntry.Text = item.Text;
 
             try
             {
@@ -71,17 +72,18 @@ namespace RecommendationNetw.Repositories
             {
                 return false;
             }
+            
         }
         public async Task<bool> DeleteAsync(Guid Id)
         {
-            var dbEntry = _context.Questionnaires.FirstOrDefault(x => x.Id.Equals(Id));
+            var dbEntry = _context.Questions.FirstOrDefault(x => x.Id.Equals(Id));
 
             if (dbEntry == null)
                 return false;
 
             try
             {
-                _context.Questionnaires.Remove(dbEntry);
+                _context.Questions.Remove(dbEntry);
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -93,7 +95,7 @@ namespace RecommendationNetw.Repositories
 
         public async Task<IEnumerable<Question>> GenerateQuestionary()
         {
-            var result = _context.Questions.GroupBy(x => x.Aspect)
+            var result = _context.Questions.GroupBy(x => x.Category)
                 .OrderBy(x => Guid.NewGuid())
                 .Select(x => x.FirstOrDefault());
             return await result.ToListAsync();

@@ -12,15 +12,12 @@ namespace RecommendationNetw.Models
     {
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
+            base.OnModelCreating(builder);            
         }
 
         public DbSet<Recommendation> Recommendations { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
-        public DbSet<Questionary> Questionnaires { get; set; }
+        public DbSet<Variant> Variants { get; set; }
     }
 }

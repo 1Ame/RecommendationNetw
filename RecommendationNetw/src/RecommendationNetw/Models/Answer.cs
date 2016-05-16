@@ -12,11 +12,13 @@ namespace RecommendationNetw.Models
 
         [Required]
         [Display(Name ="Your answer")]
-        public TextAnswer Value { get; set; }
+        public int Value { get; set; }
         
         public string QuestionId { get; set; }
-        public Question Question { get; set; }        
-    }
+        public Question Question { get; set; }   
+        
+        public string OwnerId { get; set; }
+        public ApplicationUser Owner { get; set; }     
+    } 
 
-    public enum TextAnswer { value1, value2, value3, value4 };
 }

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using RecommendationNetw.Models;
 using RecommendationNetw.Services;
 using RecommendationNetw.Repositories;
+using RecommendationNetw.Helpers;
 
 namespace RecommendationNetw
 {
@@ -19,8 +20,6 @@ namespace RecommendationNetw
     {
         public Startup(IHostingEnvironment env)
         {
-            // Set up configuration sources.
-
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
@@ -40,7 +39,6 @@ namespace RecommendationNetw
 
         public IConfigurationRoot Configuration { get; set; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
@@ -64,13 +62,8 @@ namespace RecommendationNetw
             services.AddTransient<ISmsSender, AuthMessageSender>();
             services.AddTransient<IRepository<Recommendation, Guid>, RecommendationsRepository>();
             services.AddTransient<IRepository<Question, Guid>, QuestionsRepository>();
-            services.AddTransient<IRepository<Questionary, Guid>, QuestionnariesRepository>();
-
-
-
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
@@ -118,6 +111,7 @@ namespace RecommendationNetw
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            DbInit.Initialize(app.ApplicationServices);
         }
 
         // Entry point for the application.

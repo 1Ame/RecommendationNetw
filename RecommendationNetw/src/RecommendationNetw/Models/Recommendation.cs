@@ -1,10 +1,6 @@
-﻿using Microsoft.AspNet.Mvc;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RecommendationNetw.Models
 {
@@ -31,7 +27,7 @@ namespace RecommendationNetw.Models
 
         [Required]
         [Display(Name = "Category")]
-        public Category Category { get; set; }
+        public Category? Category { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTime PostedOn { get; set; }
@@ -46,6 +42,5 @@ namespace RecommendationNetw.Models
 
         //public virtual List<Tag> Tags { get; set; }
     }
-
     public enum Category { Music, Films, Books, Art, Other };
 }

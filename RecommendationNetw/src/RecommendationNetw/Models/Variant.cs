@@ -7,15 +7,19 @@ using System.Threading.Tasks;
 
 namespace RecommendationNetw.Models
 {
-    public class Questionary
+    public class Variant
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        public string OwnerId { get; set; }
-        public ApplicationUser Owner { get; set; }
+        [Required]
+        public int NumericValue { get; set; }
 
-        public virtual List<Answer> Answers { get; set; }
+        [Required]
+        public string TextValue { get; set; }
+
+        public string QuestionId { get; set; }
+        public Question Question { get; set; }
     }
 }

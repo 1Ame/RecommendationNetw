@@ -6,12 +6,13 @@
 
 <h2>@ViewBag.Action</h2>
 
-<form asp-action="Edit" asp-controller ="Recommendations">
+<form asp-action="Edit" asp-controller ="Recommendations" method="post">
     <div class="form-horizontal">
         <h4>Recommendation</h4>
         <hr />
+        <input asp-for="Id" hidden="hidden" />
+        <input asp-for="PostedOn" hidden="hidden" type="datetime" />
         <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="Id" />
         <div class="form-group">
             <label asp-for="Title" class="col-md-2 control-label"></label>
             <div class="col-md-4">

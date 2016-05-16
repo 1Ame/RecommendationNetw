@@ -38,7 +38,6 @@ namespace RecommendationNetw.Migrations
                     PasswordHash = table.Column<string>(nullable: true),
                     PhoneNumber = table.Column<string>(nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(nullable: false),
-                    QuestionaryId = table.Column<string>(nullable: true),
                     SecurityStamp = table.Column<string>(nullable: true),
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     UserName = table.Column<string>(nullable: true)
@@ -52,7 +51,7 @@ namespace RecommendationNetw.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Aspect = table.Column<int>(nullable: false),
+                    Category = table.Column<int>(nullable: false),
                     Text = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
@@ -142,23 +141,6 @@ namespace RecommendationNetw.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
             migrationBuilder.CreateTable(
-                name: "Questionary",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    OwnerId = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Questionary", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Questionary_ApplicationUser_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-            migrationBuilder.CreateTable(
                 name: "Recommendation",
                 columns: table => new
                 {
@@ -187,24 +169,44 @@ namespace RecommendationNetw.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    OwnerId = table.Column<string>(nullable: true),
                     QuestionId = table.Column<string>(nullable: true),
                     QuestionId1 = table.Column<Guid>(nullable: true),
-                    QuestionaryId = table.Column<Guid>(nullable: true),
                     Value = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Answer", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Answer_ApplicationUser_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Answer_Question_QuestionId1",
                         column: x => x.QuestionId1,
                         principalTable: "Question",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+            migrationBuilder.CreateTable(
+                name: "Variant",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    NumericValue = table.Column<int>(nullable: false),
+                    QuestionId = table.Column<string>(nullable: true),
+                    QuestionId1 = table.Column<Guid>(nullable: true),
+                    TextValue = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Variant", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Answer_Questionary_QuestionaryId",
-                        column: x => x.QuestionaryId,
-                        principalTable: "Questionary",
+                        name: "FK_Variant_Question_QuestionId1",
+                        column: x => x.QuestionId1,
+                        principalTable: "Question",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -230,10 +232,10 @@ namespace RecommendationNetw.Migrations
             migrationBuilder.DropTable("AspNetUserRoles");
             migrationBuilder.DropTable("Answer");
             migrationBuilder.DropTable("Recommendation");
+            migrationBuilder.DropTable("Variant");
             migrationBuilder.DropTable("AspNetRoles");
-            migrationBuilder.DropTable("Question");
-            migrationBuilder.DropTable("Questionary");
             migrationBuilder.DropTable("AspNetUsers");
+            migrationBuilder.DropTable("Question");
         }
     }
 }

@@ -83,14 +83,15 @@ namespace RecommendationNetw.Controllers
         // POST: Recommendations/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind(include: "Id, Title, ShortDescription, Description, Category")] Recommendation model)
+        public async Task<IActionResult> Edit([Bind("Id, Title, ShortDescription, Description, Category")] Recommendation model)
         {
             if (ModelState.IsValid)
             {
                 bool result = false;
+
                 if (model.Id.Equals(Guid.Empty))
-                {                    
-                    model.OwnerId = User.GetUserId();                   
+                {
+                    model.OwnerId = HttpContext.User.GetUserId();
                     result = await _repository.CreateAsync(model);
                 }
                 else

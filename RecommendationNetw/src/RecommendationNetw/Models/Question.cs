@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,8 +15,10 @@ namespace RecommendationNetw.Models
         public string Text { get; set; }
 
         [Required]
-        public Aspect Aspect { get; set; }
-    }
+        public Category Category { get; set; }
 
-    public enum Aspect { aspect1, aspect2, aspect3, asect4};
+        public ICollection<Variant> Variants { get; set; }
+        public virtual ICollection<Answer> Answers { get; set; }
+    }
 }
+

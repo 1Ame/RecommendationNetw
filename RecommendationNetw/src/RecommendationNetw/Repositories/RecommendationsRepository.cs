@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Entity;
+﻿using Microsoft.AspNet.Http;
+using Microsoft.Data.Entity;
 using RecommendationNetw.Models;
 using System;
 using System.Collections.Generic;
@@ -40,11 +41,12 @@ namespace RecommendationNetw.Repositories
                 return false;
 
             item.PostedOn = DateTime.Now;
-            item.ModifiedOn = DateTime.Now;
+            item.ModifiedOn = item.PostedOn;
+            context.Entry(item).State = EntityState.Added;
 
             try
             {
-                context.Recommendations.Add(item);
+                //context.Recommendations.Add(item);
                 await context.SaveChangesAsync();
                 return true;
             }
@@ -57,17 +59,11 @@ namespace RecommendationNetw.Repositories
         {
             if (item == null)
                 return false;
-                 
-            var dbEntry = await context.Recommendations.FirstOrDefaultAsync(x => x.Id.Equals(item.Id));
-
-            if (dbEntry == null)
-                return false;
-                                       
-            dbEntry.Title = item.Title;
-            dbEntry.Description = item.Description;
-            dbEntry.ShortDescription = item.ShortDescription;
-            dbEntry.Category = item.Category;
-            dbEntry.ModifiedOn = DateTime.Now;
+            
+            item.ModifiedOn = DateTime.Now;
+            context.Entry(item).State = EntityState.Modified;
+            context.Entry(item).Property(e => e.PostedOn).IsModified = false;
+            context.Entry(item).Property(e => e.OwnerId).IsModified = false;
 
             try
             {
@@ -81,14 +77,11 @@ namespace RecommendationNetw.Repositories
         }
         public async Task<bool> DeleteAsync(Guid Id)
         {
-            var dbEntry = context.Recommendations.FirstOrDefault(x => x.Id.Equals(Id));
-
-            if (dbEntry == null)
-                return false;
+            var dbEntry = context.Recommendations.FirstOrDefault(x => x.Id.Equals(Id));            
+            context.Entry(dbEntry).State = EntityState.Deleted;
 
             try
             {
-                context.Recommendations.Remove(dbEntry);
                 await context.SaveChangesAsync();
                 return true;
             }
