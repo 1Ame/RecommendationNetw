@@ -100,14 +100,11 @@ namespace RecommendationNetw.Migrations
 
             modelBuilder.Entity("RecommendationNetw.Models.Answer", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<string>("Id");
 
                     b.Property<string>("OwnerId");
 
                     b.Property<string>("QuestionId");
-
-                    b.Property<Guid?>("QuestionId1");
 
                     b.Property<int>("Value");
 
@@ -164,8 +161,7 @@ namespace RecommendationNetw.Migrations
 
             modelBuilder.Entity("RecommendationNetw.Models.Question", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<string>("Id");
 
                     b.Property<int>("Category");
 
@@ -177,8 +173,7 @@ namespace RecommendationNetw.Migrations
 
             modelBuilder.Entity("RecommendationNetw.Models.Recommendation", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<string>("Id");
 
                     b.Property<int?>("Category")
                         .IsRequired();
@@ -206,14 +201,11 @@ namespace RecommendationNetw.Migrations
 
             modelBuilder.Entity("RecommendationNetw.Models.Variant", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<string>("Id");
 
                     b.Property<int>("NumericValue");
 
                     b.Property<string>("QuestionId");
-
-                    b.Property<Guid?>("QuestionId1");
 
                     b.Property<string>("TextValue")
                         .IsRequired();
@@ -261,7 +253,7 @@ namespace RecommendationNetw.Migrations
 
                     b.HasOne("RecommendationNetw.Models.Question")
                         .WithMany()
-                        .HasForeignKey("QuestionId1");
+                        .HasForeignKey("QuestionId");
                 });
 
             modelBuilder.Entity("RecommendationNetw.Models.Recommendation", b =>
@@ -275,7 +267,7 @@ namespace RecommendationNetw.Migrations
                 {
                     b.HasOne("RecommendationNetw.Models.Question")
                         .WithMany()
-                        .HasForeignKey("QuestionId1");
+                        .HasForeignKey("QuestionId");
                 });
         }
     }

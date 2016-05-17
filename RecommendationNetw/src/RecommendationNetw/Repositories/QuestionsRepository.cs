@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Entity;
+using RecommendationNetw.Abstracts;
 using RecommendationNetw.Models;
 using RecommendationNetw.Services;
 using System;
@@ -9,96 +10,68 @@ using System.Threading.Tasks;
 
 namespace RecommendationNetw.Repositories
 {
-    public class QuestionsRepository : IRepository<Question, Guid>
+    public class QuestionsRepository<T> : IRepository<T>
+        where T : class, IQuestion
     {
-        private readonly ApplicationDbContext _context = null;
-
-        public QuestionsRepository(ApplicationDbContext context)
+        public ApplicationDbContext Context { get; private set; }
+        public bool AutoSaveChanges { get; set; }
+        public IQueryable<T> Questions
         {
-            _context = context;
+            get { return Context.Set<T>(); }
         }
 
-        public IQueryable<Question> Items
+        public QuestionsRepository(ApplicationDbContext Сontext)
         {
-            get { return _context.Questions; }
+            Context = Сontext;
+            AutoSaveChanges = true;
         }
-        public async Task<IEnumerable<Question>> GetAllAsync()
-        {
-            return await _context.Questions.ToListAsync();
-        }
-        public async Task<IEnumerable<Question>> GetAllAsync(Expression<Func<Question, bool>> predicate)
-        {
-            return await _context.Questions.Where(predicate).ToListAsync();
-        }
-        public async Task<Question> GetAsync(Guid Id)
-        {
-            return await _context.Questions.FirstOrDefaultAsync(x => x.Id.Equals(Id));
-        }
-        public async Task<bool> CreateAsync(Question item)
-        {
-            if (item == null)
-                return false;
 
-            try
+        public virtual Task<List<T>> FindAllAsync(Expression<Func<T, bool>> predicate)
+        {
+            return Questions.Where(predicate).ToListAsync();
+        }
+        public virtual Task<T> FindByIdAsync(string Id)
+        {
+            return Questions.FirstOrDefaultAsync(x => x.Id.Equals(Id));
+        }
+
+        public virtual async Task CreateAsync(T question)
+        {
+            if (question == null)
+                throw new ArgumentNullException("question");
+
+            Context.Entry(question).State = EntityState.Added;
+
+            await SaveChanges();
+        }
+        public virtual async Task UpdateAsync(T question)
+        {
+            if (question == null)
+                throw new ArgumentNullException("question");           
+
+            Context.Entry(question).State = EntityState.Modified;            
+
+            await SaveChanges();
+        }
+        public virtual async Task DeleteAsync(string id)
+        {
+            if (id == null)
+                throw new ArgumentNullException("id");
+
+            var dbEntry = FindByIdAsync(id);
+
+            if (dbEntry != null)
+                Context.Entry(dbEntry).State = EntityState.Deleted;
+
+            await SaveChanges();
+        }
+
+        private async Task SaveChanges()
+        {
+            if (AutoSaveChanges)
             {
-                _context.Questions.Add(item);
-                await _context.SaveChangesAsync();
-                return true;
+                await Context.SaveChangesAsync();
             }
-            catch
-            {
-                return false;
-            }
-        }
-        public async Task<bool> UpdateAsync(Question item)
-        {
-            if (item == null)
-                return false;
-
-            var dbEntry = await _context.Questions.FirstOrDefaultAsync(x => x.Id == item.Id);
-
-            if (dbEntry == null)
-                return false;
-
-            dbEntry.Category = item.Category;
-            dbEntry.Text = item.Text;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-            
-        }
-        public async Task<bool> DeleteAsync(Guid Id)
-        {
-            var dbEntry = _context.Questions.FirstOrDefault(x => x.Id.Equals(Id));
-
-            if (dbEntry == null)
-                return false;
-
-            try
-            {
-                _context.Questions.Remove(dbEntry);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public async Task<IEnumerable<Question>> GenerateQuestionary()
-        {
-            var result = _context.Questions.GroupBy(x => x.Category)
-                .OrderBy(x => Guid.NewGuid())
-                .Select(x => x.FirstOrDefault());
-            return await result.ToListAsync();
         }
     }
 }

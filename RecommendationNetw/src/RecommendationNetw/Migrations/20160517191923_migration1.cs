@@ -50,7 +50,7 @@ namespace RecommendationNetw.Migrations
                 name: "Question",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<string>(nullable: false),
                     Category = table.Column<int>(nullable: false),
                     Text = table.Column<string>(nullable: false)
                 },
@@ -144,7 +144,7 @@ namespace RecommendationNetw.Migrations
                 name: "Recommendation",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<string>(nullable: false),
                     Category = table.Column<int>(nullable: false),
                     Description = table.Column<string>(nullable: false),
                     IsModerated = table.Column<bool>(nullable: false),
@@ -168,10 +168,9 @@ namespace RecommendationNetw.Migrations
                 name: "Answer",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<string>(nullable: false),
                     OwnerId = table.Column<string>(nullable: true),
                     QuestionId = table.Column<string>(nullable: true),
-                    QuestionId1 = table.Column<Guid>(nullable: true),
                     Value = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -184,8 +183,8 @@ namespace RecommendationNetw.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Answer_Question_QuestionId1",
-                        column: x => x.QuestionId1,
+                        name: "FK_Answer_Question_QuestionId",
+                        column: x => x.QuestionId,
                         principalTable: "Question",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -194,18 +193,17 @@ namespace RecommendationNetw.Migrations
                 name: "Variant",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    Id = table.Column<string>(nullable: false),
                     NumericValue = table.Column<int>(nullable: false),
                     QuestionId = table.Column<string>(nullable: true),
-                    QuestionId1 = table.Column<Guid>(nullable: true),
                     TextValue = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Variant", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Variant_Question_QuestionId1",
-                        column: x => x.QuestionId1,
+                        name: "FK_Variant_Question_QuestionId",
+                        column: x => x.QuestionId,
                         principalTable: "Question",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);

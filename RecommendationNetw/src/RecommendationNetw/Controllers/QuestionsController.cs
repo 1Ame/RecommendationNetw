@@ -42,12 +42,12 @@ namespace RecommendationNetw.Controllers
             }
 
             var user = await GetCurrentUserAsync();
-            var questionList = await _repository.GetAllAsync(x => x.Category == category);
+            var questionList = await _repository.FindAllAsync(x => x.Category == category);
 
             var model = questionList.Select(x => new Answer()
                 {
                     Question = x,
-                    QuestionId = x.Id.ToString()
+                    QuestionId = x.Id                  
                 });
 
             return View("Edit", model);
@@ -60,7 +60,8 @@ namespace RecommendationNetw.Controllers
                 return HttpNotFound();
             }
 
-            var model = await GetCurrentUserAsync();
+            var user = await GetCurrentUserAsync();
+            var model = user.Answers;
 
             if (model == null)
             {
@@ -68,7 +69,7 @@ namespace RecommendationNetw.Controllers
             }
 
             ViewBag.Action = "Edit";
-            return View(model.Answers);
+            return View(model);
         }
 
         [HttpPost]

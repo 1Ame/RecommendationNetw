@@ -6,15 +6,16 @@ using System.Threading.Tasks;
 
 namespace RecommendationNetw.Repositories
 {
+    public interface IRepository<T> : IRepository<T, string> where T : class
+    {
+    }
+
     public interface IRepository<T, in Tkey> where T : class
     {
-        IQueryable<T> Items { get; }
-
-        Task<IEnumerable<T>> GetAllAsync();
-        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> prediacte);
-        Task<T> GetAsync(Tkey Id);
-        Task<bool> CreateAsync(T item);
-        Task<bool> UpdateAsync(T item);
-        Task<bool> DeleteAsync(Tkey Id);
-    }
+        Task<List<T>> FindAllAsync(Expression<Func<T, bool>> prediacte);
+        Task<T> FindByIdAsync(Tkey Id);
+        Task CreateAsync(T Item);
+        Task UpdateAsync(T Item);
+        Task DeleteAsync(Tkey Id);
+    }    
 }

@@ -8,8 +8,7 @@ namespace RecommendationNetw.Models
     public class Question
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         [Required]
         public string Text { get; set; }
@@ -17,7 +16,7 @@ namespace RecommendationNetw.Models
         [Required]
         public Category Category { get; set; }
 
-        public ICollection<Variant> Variants { get; set; }
+        public virtual ICollection<Variant> Variants { get; set; }
         public virtual ICollection<Answer> Answers { get; set; }
     }
 }

@@ -1,14 +1,20 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+using RecommendationNetw.Abstracts;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RecommendationNetw.Models
 {
-    public class Recommendation
+    public class Recommendation : IRecommendation
     {
+        public Recommendation()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
+
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]        
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         [Required]
         [Display(Name = "Title")]
@@ -36,11 +42,12 @@ namespace RecommendationNetw.Models
         public DateTime ModifiedOn { get; set; }
 
         public bool IsModerated { get; set; }
-        
+
         public string OwnerId { get; set; }
-        public ApplicationUser Owner { get; set; }        
+        public ApplicationUser Owner { get; set; }
 
         //public virtual List<Tag> Tags { get; set; }
-    }
+    }   
+
     public enum Category { Music, Films, Books, Art, Other };
 }

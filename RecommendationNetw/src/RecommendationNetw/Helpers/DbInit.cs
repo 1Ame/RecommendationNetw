@@ -3,6 +3,8 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System.Threading.Tasks;
 
 namespace RecommendationNetw.Helpers
 {
@@ -12,26 +14,32 @@ namespace RecommendationNetw.Helpers
         {
             var context = serviceProvider.GetService<ApplicationDbContext>();
             var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
+            var roleManager = serviceProvider.GetService<RoleManager<IdentityRole>>();
+
+            if (!roleManager.Roles.Any())
+            {
+                var role = new IdentityRole();
+                role.Name = "moder";
+                var result = roleManager.CreateAsync(role).Result;
+            }
 
             if (!userManager.Users.Any())
             {
                 var user = new ApplicationUser { UserName = "aaa", Email = "aaa@aaa.com" };
-                var result = userManager.CreateAsync(user, "123Aa/");
+                var result = userManager.CreateAsync(user, "123Aa/").Result;
+                if (result.Succeeded)
+                {
+                    var dbEntry = userManager.FindByNameAsync(user.UserName).Result;
+                    userManager.AddToRoleAsync(dbEntry, "moder");
+                }
             }
             
             if (!context.Questions.Any())
             {
-                var variants1 = new Variant[]
-                {
-                    new Variant { NumericValue = 1, TextValue = "Odin"},
-                    new Variant { NumericValue = 2, TextValue = "Dwa"},
-                    new Variant { NumericValue = 3, TextValue = "Tri"},
-                };
-
-                context.Questions.Add(new Question { Category = Category.Art, Text = "Why?", Variants = variants1});
-                context.Questions.Add(new Question { Category = Category.Books, Text = "Who?" });
-                context.Questions.Add(new Question { Category = Category.Films, Text = "When?"});
-                context.Questions.Add(new Question { Category = Category.Music, Text = "What?" });
+                var question = new Question {Id = Guid.NewGuid().ToString(), Category = Category.Art, Text = "Why?" };
+                var variant = new Variant { Id = Guid.NewGuid().ToString(), NumericValue = 1, TextValue = "Odin", QuestionId = question.Id };
+                context.Questions.Add(question);
+                context.Variants.Add(variant);
                 context.SaveChanges();
             }
         }

@@ -10,8 +10,7 @@ namespace RecommendationNetw.Models
     public class Variant
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         [Required]
         public int NumericValue { get; set; }
@@ -20,6 +19,6 @@ namespace RecommendationNetw.Models
         public string TextValue { get; set; }
 
         public string QuestionId { get; set; }
-        public Question Question { get; set; }
+        public virtual Question Question { get; set; }
     }
 }

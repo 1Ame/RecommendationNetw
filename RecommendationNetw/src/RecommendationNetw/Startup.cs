@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -13,6 +10,8 @@ using RecommendationNetw.Models;
 using RecommendationNetw.Services;
 using RecommendationNetw.Repositories;
 using RecommendationNetw.Helpers;
+using RecommendationNetw.Managers;
+using RecommendationNetw.Abstracts;
 
 namespace RecommendationNetw
 {
@@ -60,8 +59,10 @@ namespace RecommendationNetw
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
-            services.AddTransient<IRepository<Recommendation, Guid>, RecommendationsRepository>();
-            services.AddTransient<IRepository<Question, Guid>, QuestionsRepository>();
+            services.AddTransient<IRepository<Recommendation>, RecommendationsRepository<Recommendation>>();
+
+            services.AddTransient<RecommendationManager<Recommendation>, RecommendationManager<Recommendation>>();
+
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
