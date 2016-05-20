@@ -6,16 +6,18 @@ using System.Threading.Tasks;
 
 namespace RecommendationNetw.Abstracts
 {
-    public interface IQuestion : IQuestion<string>
+    public interface IVariant : IVariant<string>
     {
 
     }
 
-    // Minimal Question model
-    public interface IQuestion<TKey>    
+    // Minimal Variant model
+    public interface IVariant<TKey>
     {
         TKey Id { get; }
 
-        Category Category { get; set; }
+        int NumericValue { get; set; }
+
+        string TextValue { get; set; }
     }
 }

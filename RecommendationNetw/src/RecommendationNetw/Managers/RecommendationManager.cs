@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.Data.Entity;
-using RecommendationNetw.Abstracts;
+﻿using Microsoft.Data.Entity;
 using RecommendationNetw.Models;
 using RecommendationNetw.Repositories;
 using System;
@@ -13,69 +10,64 @@ using System.Threading.Tasks;
 namespace RecommendationNetw.Managers
 {
     public class RecommendationManager<T> : RecommendationManager<T, string>
-        where T : class, IRecommendation
+        where T : Recommendation
     {
-        public RecommendationManager(IRepository<T> repository, UserManager<ApplicationUser> userManager)
-            : base(repository, userManager)
+        public RecommendationManager(IRepository<T> repository)
+            : base(repository)
         {
         }
     }
 
-    public class RecommendationManager<T, TKey>
-        where T : class, IRecommendation<TKey>
+    public class RecommendationManager<TRecom, TKey>
+        where TRecom :  Recommendation<TKey>
+        where TKey : IEquatable<TKey>
     {
+        protected IRepository<TRecom, TKey> _repository { get; }
+        public IQueryable<TRecom> Recommendations { get; }
 
-        protected IRepository<T, TKey> Repository { get; set; }
-        protected UserManager<ApplicationUser> UserManager { get; set; }
-
-        public RecommendationManager(IRepository<T, TKey> repository, UserManager<ApplicationUser> userManager)
+        public RecommendationManager(IRepository<TRecom, TKey> repository)
         {
-            Repository = repository ;
-            UserManager = userManager;
+            _repository = repository;
+            Recommendations = repository.Items;
+            
         }
 
-        public async Task<bool> CanGetRecommendations(string userId, Category category)
-        {
-            var user = await UserManager.FindByIdAsync(userId);
-
-            if (user == null || !user.Answers.Any(x => x.Question.Category == category))
-                return false;
-
-            return true;
+        public virtual IQueryable<TRecom> FindAllAsync(Expression<Func<TRecom, bool>> predicate)
+        {     
+            return _repository.Items.Where(predicate);
         }
-
-        public virtual async Task<IEnumerable<T>> FindAllAsync(Expression<Func<T, bool>> predicate)
-        {
-            return await Repository.FindAllAsync(predicate);
-        }
-        public virtual async Task<T> FindByIdAsync(TKey Id)
+        public virtual Task<TRecom> FindByIdAsync(TKey Id)
         {
             try
             {
-                return await Repository.FindByIdAsync(Id);
+                return _repository.FindByIdAsync(Id);
             }
             catch
             {
                 return null;
             }
         }
-        public virtual async Task<bool> CreateAsync(T recommendation)
+        public virtual Task<TRecom> FindByIdWithRefAsync<TProp>(TKey Id)
+        {
+            return _repository.Items.Include(x => x.Owner).FirstOrDefaultAsync(x => Id.Equals(x.Id));
+        }
+        public virtual async Task<bool> CreateAsync(TRecom recommendation)
         {
             try
-            {
-                await Repository.CreateAsync(recommendation);
+            {                
+                await _repository.CreateAsync(recommendation);
                 return true;
             }
             catch
-            {                
+            {
                 return false;
             }
         }
-        public virtual async Task<bool> UpdateAsync(T recommendation)
+        public virtual async Task<bool> UpdateAsync(TRecom recommendation)
         {
             try
             {
-                await Repository.UpdateAsync(recommendation);
+                await _repository.UpdateAsync(recommendation);
                 return true;
             }
             catch
@@ -87,7 +79,7 @@ namespace RecommendationNetw.Managers
         {
             try
             {
-                await Repository.DeleteAsync(Id);
+                await _repository.DeleteAsync(Id);
                 return true;
             }
             catch
@@ -95,5 +87,26 @@ namespace RecommendationNetw.Managers
                 return false;
             }
         }
+        public virtual async Task<bool> SetModerationValue(TKey Id, bool Value)
+        {
+            try
+            {
+                var dbEntry = await _repository.FindByIdAsync(Id);
+
+                if (dbEntry == null)
+                    return false;
+
+                dbEntry.IsModerated = Value;
+
+                await _repository.UpdateAsync(dbEntry);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
     }
 }
+

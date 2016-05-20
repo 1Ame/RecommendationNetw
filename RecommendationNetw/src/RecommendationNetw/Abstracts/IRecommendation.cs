@@ -12,7 +12,8 @@ namespace RecommendationNetw.Abstracts
 
     }
 
-    public interface IRecommendation<out TKey>        
+    // Minimal Recomendation model
+    public interface IRecommendation<TKey>  
     {
         TKey Id { get; }
 
@@ -20,6 +21,6 @@ namespace RecommendationNetw.Abstracts
 
         DateTime PostedOn { get; set; }
 
-        DateTime ModifiedOn { get; set; }        
+        DateTime ModifiedOn { get; set; } 
     }
 }

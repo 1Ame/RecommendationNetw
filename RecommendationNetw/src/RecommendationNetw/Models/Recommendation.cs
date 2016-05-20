@@ -6,15 +6,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RecommendationNetw.Models
 {
-    public class Recommendation : IRecommendation
+    public class Recommendation : Recommendation<string>, IRecommendation
     {
         public Recommendation()
         {
             Id = Guid.NewGuid().ToString();
         }
-
+    }
+    public class Recommendation<TKey> : IRecommendation<TKey>
+    {
+        
         [Key]
-        public string Id { get; set; }
+        public TKey Id { get; set; }
 
         [Required]
         [Display(Name = "Title")]
@@ -33,7 +36,7 @@ namespace RecommendationNetw.Models
 
         [Required]
         [Display(Name = "Category")]
-        public Category? Category { get; set; }
+        public Category Category { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTime PostedOn { get; set; }
@@ -49,5 +52,5 @@ namespace RecommendationNetw.Models
         //public virtual List<Tag> Tags { get; set; }
     }   
 
-    public enum Category { Music, Films, Books, Art, Other };
+    public enum Category { Music = 1, Films, Books, Art, Other };
 }

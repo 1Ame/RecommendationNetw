@@ -1,14 +1,24 @@
-﻿using System;
+﻿using RecommendationNetw.Abstracts;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RecommendationNetw.Models
 {
-    public class Question
+    public class Question : Question<string>, IQuestion
     {
+        public Question()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
+    }
+
+    public class Question<TKey> : IQuestion<TKey>
+    {        
+
         [Key]
-        public string Id { get; set; }
+        public TKey Id { get; set; }
 
         [Required]
         public string Text { get; set; }
@@ -16,8 +26,8 @@ namespace RecommendationNetw.Models
         [Required]
         public Category Category { get; set; }
 
-        public virtual ICollection<Variant> Variants { get; set; }
-        public virtual ICollection<Answer> Answers { get; set; }
+        public virtual ICollection<Variant> Variants { get; set; } = new List<Variant>();
+        public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
     }
 }
 

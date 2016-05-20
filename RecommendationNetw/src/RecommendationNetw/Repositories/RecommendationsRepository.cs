@@ -10,12 +10,22 @@ using System.Threading.Tasks;
 
 namespace RecommendationNetw.Repositories
 {
-    public class RecommendationsRepository<T> : IRepository<T> 
+    public class RecommendationsRepository<T> : RecommendationsRepository<T, string>, IRepository<T>
         where T : class, IRecommendation
+    {
+        public RecommendationsRepository(ApplicationDbContext Сontext)
+            :base(Сontext)
+        {
+        }       
+    }
+
+    public class RecommendationsRepository<T, TKey> : IRepository<T, TKey> 
+        where T : class, IRecommendation<TKey>
+        where TKey: IEquatable<TKey>
     {
         public ApplicationDbContext Context { get; private set; }
         public bool AutoSaveChanges { get; set; }
-        public IQueryable<T> Recommendations
+        public IQueryable<T> Items
         {
             get { return Context.Set<T>(); }
         }
@@ -25,17 +35,10 @@ namespace RecommendationNetw.Repositories
             Context = Сontext;
             AutoSaveChanges = true;
         }
-        
-        public virtual Task<List<T>> FindAllAsync(Expression<Func<T, bool>> predicate)
-        {
-            return Recommendations.Where(predicate).ToListAsync();
-        }
-        public virtual Task<T> FindByIdAsync(string Id)
-        {
-            if(Id == null)
-                throw new ArgumentNullException("recommendation");
 
-            return Recommendations.FirstOrDefaultAsync(x=>x.Id.Equals(Id));
+        public virtual Task<T> FindByIdAsync(TKey Id)
+        {
+            return Items.FirstOrDefaultAsync(x=>x.Id.Equals(Id));
         }
         public virtual async Task CreateAsync(T recommendation)
         {
@@ -46,7 +49,7 @@ namespace RecommendationNetw.Repositories
             recommendation.ModifiedOn = recommendation.PostedOn;
             Context.Entry(recommendation).State = EntityState.Added;
 
-            await SaveChanges();
+            await SaveChangesAsync();
         }
         public virtual async Task UpdateAsync(T recommendation)
         {
@@ -58,9 +61,9 @@ namespace RecommendationNetw.Repositories
             Context.Entry(recommendation).State = EntityState.Modified;
             Context.Entry(recommendation).Property(e => e.PostedOn).IsModified = false;
 
-            await SaveChanges();
+            await SaveChangesAsync();
         }
-        public virtual async Task DeleteAsync(string id)
+        public virtual async Task DeleteAsync(TKey id)
         {
             if (id == null)
                 throw new ArgumentNullException("id");
@@ -70,15 +73,15 @@ namespace RecommendationNetw.Repositories
             if (dbEntry != null)
                 Context.Entry(dbEntry).State = EntityState.Deleted;
 
-            await SaveChanges();
+            await SaveChangesAsync();
         }
-
-        private async Task SaveChanges()
+       
+        public async Task SaveChangesAsync()
         {
             if (AutoSaveChanges)
             {
                 await Context.SaveChangesAsync();
             }
-        }
+        }        
     }
 }

@@ -8,14 +8,18 @@ namespace RecommendationNetw.Repositories
 {
     public interface IRepository<T> : IRepository<T, string> where T : class
     {
+
     }
 
     public interface IRepository<T, in Tkey> where T : class
     {
-        Task<List<T>> FindAllAsync(Expression<Func<T, bool>> prediacte);
+        bool AutoSaveChanges { get; set; }
+        IQueryable<T> Items { get; }
+
         Task<T> FindByIdAsync(Tkey Id);
         Task CreateAsync(T Item);
         Task UpdateAsync(T Item);
         Task DeleteAsync(Tkey Id);
+        Task SaveChangesAsync();
     }    
 }

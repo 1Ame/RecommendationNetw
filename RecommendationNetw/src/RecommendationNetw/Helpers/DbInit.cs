@@ -39,9 +39,9 @@ namespace RecommendationNetw.Helpers
                 var question = new Question {Id = Guid.NewGuid().ToString(), Category = Category.Art, Text = "Why?" };
                 var variant = new Variant { Id = Guid.NewGuid().ToString(), NumericValue = 1, TextValue = "Odin", QuestionId = question.Id };
                 context.Questions.Add(question);
-                context.Variants.Add(variant);
-                context.SaveChanges();
+                context.Variants.Add(variant);                
             }
+            context.SaveChanges();
         }
     }
 }

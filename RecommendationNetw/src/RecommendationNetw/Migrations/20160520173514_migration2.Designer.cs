@@ -8,8 +8,8 @@ using RecommendationNetw.Models;
 namespace RecommendationNetw.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20160517191923_migration1")]
-    partial class migration1
+    [Migration("20160520173514_migration2")]
+    partial class migration2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -103,6 +103,8 @@ namespace RecommendationNetw.Migrations
                 {
                     b.Property<string>("Id");
 
+                    b.Property<int>("Category");
+
                     b.Property<string>("OwnerId");
 
                     b.Property<string>("QuestionId");
@@ -176,8 +178,7 @@ namespace RecommendationNetw.Migrations
                 {
                     b.Property<string>("Id");
 
-                    b.Property<int?>("Category")
-                        .IsRequired();
+                    b.Property<int>("Category");
 
                     b.Property<string>("Description")
                         .IsRequired();

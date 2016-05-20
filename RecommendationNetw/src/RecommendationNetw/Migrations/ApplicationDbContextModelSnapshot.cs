@@ -102,6 +102,8 @@ namespace RecommendationNetw.Migrations
                 {
                     b.Property<string>("Id");
 
+                    b.Property<int>("Category");
+
                     b.Property<string>("OwnerId");
 
                     b.Property<string>("QuestionId");
@@ -175,8 +177,7 @@ namespace RecommendationNetw.Migrations
                 {
                     b.Property<string>("Id");
 
-                    b.Property<int?>("Category")
-                        .IsRequired();
+                    b.Property<int>("Category");
 
                     b.Property<string>("Description")
                         .IsRequired();

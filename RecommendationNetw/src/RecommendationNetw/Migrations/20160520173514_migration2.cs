@@ -5,7 +5,7 @@ using Microsoft.Data.Entity.Metadata;
 
 namespace RecommendationNetw.Migrations
 {
-    public partial class migration1 : Migration
+    public partial class migration2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -169,6 +169,7 @@ namespace RecommendationNetw.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
+                    Category = table.Column<int>(nullable: false),
                     OwnerId = table.Column<string>(nullable: true),
                     QuestionId = table.Column<string>(nullable: true),
                     Value = table.Column<int>(nullable: false)

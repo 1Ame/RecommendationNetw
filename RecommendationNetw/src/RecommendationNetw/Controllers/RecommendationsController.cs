@@ -7,6 +7,8 @@ using RecommendationNetw.ViewModels.Recommendations;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using RecommendationNetw.Managers;
+using Microsoft.AspNet.Identity;
+using Microsoft.Data.Entity;
 
 namespace RecommendationNetw.Controllers
 {
@@ -14,22 +16,29 @@ namespace RecommendationNetw.Controllers
     public class RecommendationsController : Controller
     {
         private readonly RecommendationManager<Recommendation> _recomManager = null;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly int PageSize = 3;
 
-        public RecommendationsController(RecommendationManager<Recommendation> manager)
+        public RecommendationsController(RecommendationManager<Recommendation> manager, UserManager<ApplicationUser> userManager)
         {
             _recomManager = manager;
+            _userManager = userManager;
         }
 
         // GET: Recommendations
         public async Task<IActionResult> Index(int page = 1)
         {
-            var items = await _recomManager.FindAllAsync(x => x.OwnerId.Equals(User.GetUserId()));
-            var pagingInfo = new PagingInfo(items.Count(), page, 3);
+            var userId = HttpContext.User.GetUserId();
+
+            var items = _recomManager.FindAllAsync(x => userId.Equals(x.OwnerId));            
 
             var model = new ListViewModel()
             {
-                Items = items.Skip((pagingInfo.CurrentPage - 1) * pagingInfo.PageSize).Take(pagingInfo.PageSize),
-                PagingInfo = pagingInfo
+                PagingInfo = new PagingInfo(await items.CountAsync(), page, PageSize),
+
+                Items = await items.Skip((page - 1) * PageSize)
+                    .Take(PageSize)
+                    .ToListAsync(),                
             };
 
             return View(model);
@@ -37,7 +46,7 @@ namespace RecommendationNetw.Controllers
 
         // GET: Recommendations/Details/5
         public async Task<IActionResult> Details(string Id)
-        {
+        {           
             if (Id == null)
             {
                 return HttpNotFound();
@@ -55,7 +64,6 @@ namespace RecommendationNetw.Controllers
         // GET: Recommendations/Create
         public IActionResult Create()
         {
-            ViewBag.Action = "Create";
             return View(new Recommendation());
         }
 
@@ -72,6 +80,7 @@ namespace RecommendationNetw.Controllers
             }
             return RedirectToAction("Index");
         }
+        
         // GET: Recommendations/Edit/Id
         public async Task<IActionResult> Edit(string Id)
         {
@@ -86,18 +95,19 @@ namespace RecommendationNetw.Controllers
             if (model == null || !model.OwnerId.Equals(userId))
             {
                 return HttpNotFound();
-            }            
-            ViewBag.Action = "Edit";
+            } 
+                       
             return View(model);
         }
 
         // POST: Recommendations/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("Id, Title, ShortDescription, OwnerId, Description, Category")] Recommendation model)
+        public async Task<IActionResult> Edit([Bind("Id, Title, ShortDescription, Description, Category")] Recommendation model)
         {
             if (ModelState.IsValid)
-            {                
+            {
+                model.OwnerId = HttpContext.User.GetUserId();
                 var result = await _recomManager.UpdateAsync(model);
                 TempData["opertionResult"] = (result) ? "Recommendation saved." : "Some Error Message";
             }
@@ -131,6 +141,11 @@ namespace RecommendationNetw.Controllers
             }
 
             return PartialView("_DeleteConfirm", model);
-        }          
+        }
+
+        private async Task<ApplicationUser> GetCurrentUserAsync()
+        {
+            return await _userManager.FindByIdAsync(HttpContext.User.GetUserId());
+        }
     }
 }

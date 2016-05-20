@@ -23,15 +23,15 @@ namespace RecommendationNetw.Controllers
                 
         public async Task<IActionResult> Index(int page = 1)
         {
-            var items = (await _repository.FindAllAsync(x => x.IsModerated == false)).OrderBy(x => x.Owner);
-            var pagingInfo = new PagingInfo(items.Count(), page, 1);
+            //var items = (await _repository.FindAllAsync(x => x.IsModerated == false)).OrderBy(x => x.Owner);
+            //var pagingInfo = new PagingInfo(items.Count(), page, 1);
 
-            var model = new ListViewModel()
-            {
-                Items = items.Skip((pagingInfo.CurrentPage - 1) * pagingInfo.PageSize).Take(pagingInfo.PageSize),
-                PagingInfo = pagingInfo
-            };
-            return View(model);
+            //var model = new ListViewModel()
+            //{
+            //    Items = items.Skip((pagingInfo.CurrentPage - 1) * pagingInfo.PageSize).Take(pagingInfo.PageSize),
+            //    PagingInfo = pagingInfo
+            //};
+            return View(/*model*/);
         }        
     }
 }
