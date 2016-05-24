@@ -12,10 +12,10 @@ namespace RecommendationNetw.Models
     {        
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            //builder.Entity<ApplicationUser>().HasMany(x => x.Answers).WithOne(x => x.Owner).HasForeignKey(x => x.OwnerId);
+            builder.Entity<ApplicationUser>().HasMany(x => x.Answers).WithOne(x => x.Owner).HasForeignKey(x => x.OwnerId);
             builder.Entity<ApplicationUser>().HasMany(x => x.Recommendations).WithOne(x => x.Owner).HasForeignKey(x => x.OwnerId);
             builder.Entity<Question>().HasMany(x => x.Variants).WithOne(x => x.Question).HasForeignKey(x => x.QuestionId);
-            //builder.Entity<Question>().HasMany(x => x.Answers).WithOne(x => x.Question).HasForeignKey(x => x.QuestionId);
+            builder.Entity<Question>().HasMany(x => x.Answers).WithOne(x => x.Question).HasForeignKey(x => x.QuestionId);
 
             base.OnModelCreating(builder);
         }

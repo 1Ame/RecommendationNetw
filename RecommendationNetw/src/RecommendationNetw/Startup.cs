@@ -12,6 +12,8 @@ using RecommendationNetw.Repositories;
 using RecommendationNetw.Helpers;
 using RecommendationNetw.Managers;
 using RecommendationNetw.Abstracts;
+using Microsoft.AspNet.Identity;
+using System.Threading.Tasks;
 
 namespace RecommendationNetw
 {
@@ -63,6 +65,10 @@ namespace RecommendationNetw
             services.AddTransient<IRepository<Recommendation>, RecommendationsRepository<Recommendation>>();
             services.AddTransient<IRepository<Question>, QuestionsRepository<Question>>();
             services.AddTransient<IRepository<Answer>, AnswersRepository<Answer>>();
+
+            services.AddTransient<RecommendationService<ApplicationUser>>();
+            services.AddTransient<IMeasure, PearsonMeasure>();
+
 
             services.AddTransient<RecommendationManager<Recommendation>>();
             services.AddTransient<QuestionManager<Question>>();

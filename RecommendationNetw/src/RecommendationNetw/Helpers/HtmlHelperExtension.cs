@@ -9,7 +9,7 @@ namespace RecommendationNetw
     {
         public static IEnumerable<SelectListItem> GetVariantSelectList(this IHtmlHelper helper, ICollection<Variant> variants)
         {
-            return variants.Select(x => new SelectListItem() { Text = x.TextValue, Value = x.NumericValue.ToString() });
+            return variants.OrderBy(x=>x.NumericValue).Select(x => new SelectListItem() { Text = x.TextValue, Value = x.NumericValue.ToString() });
         }
     }
 }

@@ -84,7 +84,7 @@ namespace RecommendationNetw.Managers
                 return false;
             }
         }
-        public virtual async Task<bool> EditRangeAsync(IEnumerable<TAnswer> answers)
+        public virtual async Task<bool> UpdateRangeAsync(IEnumerable<TAnswer> answers)
         {
             try
             {

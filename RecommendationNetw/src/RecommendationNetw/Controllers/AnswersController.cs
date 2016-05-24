@@ -14,13 +14,13 @@ using Microsoft.Data.Entity;
 
 namespace RecommendationNetw.Controllers
 {
-    public class QuestionsController : Controller
+    public class AnswersController : Controller
     {
         private readonly QuestionManager<Question> _questionManager;
         private readonly AnswerManager<Answer> _answerManager;
 
 
-        public QuestionsController(QuestionManager<Question> questionManager,
+        public AnswersController(QuestionManager<Question> questionManager,
             AnswerManager<Answer> answerManager)
         {
             _questionManager = questionManager;
@@ -65,7 +65,7 @@ namespace RecommendationNetw.Controllers
         public async Task<IActionResult> Create(IEnumerable<Answer> model)
         {            
             if (ModelState.IsValid)
-            {
+            {                
                 foreach (var item in model)
                     item.OwnerId = UserId;
                  
@@ -98,7 +98,7 @@ namespace RecommendationNetw.Controllers
                 foreach (var item in model)
                     item.OwnerId = UserId;
 
-                var result = await _answerManager.EditRangeAsync(model);
+                var result = await _answerManager.UpdateRangeAsync(model);
                 TempData["opertionResult"] = (result) ? "Answers saved." : "Some Error Message";
             }
             return RedirectToAction("Index", "Home");

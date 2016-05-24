@@ -8,8 +8,8 @@ using RecommendationNetw.Models;
 namespace RecommendationNetw.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20160520173514_migration2")]
-    partial class migration2
+    [Migration("20160523233730_migration")]
+    partial class migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

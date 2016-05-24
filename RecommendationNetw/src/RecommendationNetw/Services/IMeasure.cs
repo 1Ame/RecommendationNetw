@@ -5,8 +5,13 @@ using System.Threading.Tasks;
 
 namespace RecommendationNetw.Services
 {
-    public interface IMeasure<in T>
+    public interface IMeasure : IMeasure<IDictionary<string, int>>
     {
-        double Calculate(T[] x, T[] y);
+        
+    }
+
+    public interface IMeasure<in TMassive>
+    {
+        double Calculate(TMassive x, TMassive y);
     }
 }

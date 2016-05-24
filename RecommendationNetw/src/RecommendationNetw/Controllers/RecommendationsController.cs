@@ -7,22 +7,23 @@ using RecommendationNetw.ViewModels.Recommendations;
 using System.Security.Claims;
 using Microsoft.AspNet.Authorization;
 using RecommendationNetw.Managers;
-using Microsoft.AspNet.Identity;
 using Microsoft.Data.Entity;
+using RecommendationNetw.Services;
 
 namespace RecommendationNetw.Controllers
 {
     [Authorize]
     public class RecommendationsController : Controller
     {
-        private readonly RecommendationManager<Recommendation> _recomManager = null;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RecommendationManager<Recommendation> _recomManager;
+        private readonly RecommendationService<ApplicationUser> _service = null;
+
         private readonly int PageSize = 3;
 
-        public RecommendationsController(RecommendationManager<Recommendation> manager, UserManager<ApplicationUser> userManager)
+        public RecommendationsController(RecommendationManager<Recommendation> manager, RecommendationService<ApplicationUser> service)
         {
             _recomManager = manager;
-            _userManager = userManager;
+            _service = service;            
         }
 
         // GET: Recommendations
@@ -51,8 +52,8 @@ namespace RecommendationNetw.Controllers
             {
                 return HttpNotFound();
             }
-
             var recommendation = await _recomManager.FindByIdAsync(Id);
+
             if (recommendation == null)
             {
                 return HttpNotFound();
@@ -141,11 +142,6 @@ namespace RecommendationNetw.Controllers
             }
 
             return PartialView("_DeleteConfirm", model);
-        }
-
-        private async Task<ApplicationUser> GetCurrentUserAsync()
-        {
-            return await _userManager.FindByIdAsync(HttpContext.User.GetUserId());
-        }
+        }        
     }
 }
