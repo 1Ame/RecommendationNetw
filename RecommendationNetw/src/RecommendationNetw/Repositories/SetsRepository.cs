@@ -8,27 +8,29 @@ using System.Threading.Tasks;
 
 namespace RecommendationNetw.Repositories
 {
-    public class AnswersRepository<T> : AnswersRepository<T, string>, IRepository<T>
-           where T : class, IAnswer
+    public class SetsRepository<T> : SetsRepository<T, string>, IRepository<T>
+           where T : class, IUsersSet
     {
-        public AnswersRepository(ApplicationDbContext Сontext)
+        public SetsRepository(ApplicationDbContext Сontext)
             : base(Сontext)
         {
-        }        
+        }
     }
 
-    public class AnswersRepository<T, TKey> : IRepository<T, TKey>
-        where T : class, IAnswer<TKey>
-        where TKey: IEquatable<TKey>
+    public class SetsRepository<T, TKey> : IRepository<T, TKey>
+        where T : class, IUsersSet<TKey>
+        where TKey : IEquatable<TKey>
     {
         public ApplicationDbContext Context { get; private set; }
+
         public bool AutoSaveChanges { get; set; }
+
         public IQueryable<T> Items
         {
             get { return Context.Set<T>(); }
         }
 
-        public AnswersRepository(ApplicationDbContext Сontext)
+        public SetsRepository(ApplicationDbContext Сontext)
         {
             Context = Сontext;
             AutoSaveChanges = true;
@@ -38,24 +40,27 @@ namespace RecommendationNetw.Repositories
         {
             return Items.FirstOrDefaultAsync(x => Id.Equals(x.Id));
         }
-        public virtual async Task CreateAsync(T answer)
-        {
-            if (answer == null)
-                throw new ArgumentNullException("answer");
 
-            Context.Entry(answer).State = EntityState.Added;
+        public virtual async Task CreateAsync(T set)
+        {
+            if (set == null)
+                throw new ArgumentNullException("set");
+
+            Context.Entry(set).State = EntityState.Added;
 
             await SaveChangesAsync();
         }
-        public virtual async Task UpdateAsync(T answer)
-        {
-            if (answer == null)
-                throw new ArgumentNullException("answer");
 
-            Context.Entry(answer).State = EntityState.Modified;
+        public virtual async Task UpdateAsync(T set)
+        {
+            if (set == null)
+                throw new ArgumentNullException("set");
+
+            Context.Entry(set).State = EntityState.Modified;
 
             await SaveChangesAsync();
         }
+
         public virtual async Task DeleteAsync(TKey id)
         {
             if (id == null)
@@ -65,6 +70,16 @@ namespace RecommendationNetw.Repositories
 
             if (dbEntry != null)
                 Context.Entry(dbEntry).State = EntityState.Deleted;
+
+            await SaveChangesAsync();
+        }
+
+        public virtual async Task DeleteUserSets(TKey userId, Category category)
+        {
+            if (userId == null)
+                throw new ArgumentNullException("id");
+
+            Context.Set<T>().RemoveRange(Context.Set<T>().Where(x => x.Category.Equals(category) && (x.OwnerUserId.Equals(userId) || x.TargetUserId.Equals(userId))));
 
             await SaveChangesAsync();
         }

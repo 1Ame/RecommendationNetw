@@ -20,7 +20,7 @@ namespace RecommendationNetw.Managers
 
     public class AnswerManager<TAnswer, TKey>
         where TAnswer : Answer<TKey>
-        where TKey : IEquatable<TKey>
+        where TKey : IEquatable<TKey>        
     {
         protected IRepository<TAnswer, TKey> repository { get; set; }
 
@@ -88,7 +88,7 @@ namespace RecommendationNetw.Managers
         {
             try
             {
-                repository.AutoSaveChanges = false;
+                repository.AutoSaveChanges = false;                
 
                 foreach (var answer in answers)
                     await repository.UpdateAsync(answer);

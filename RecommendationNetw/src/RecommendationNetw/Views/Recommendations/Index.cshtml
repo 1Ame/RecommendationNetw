@@ -1,52 +1,54 @@
 @model RecommendationNetw.ViewModels.Recommendations.ListViewModel
 
-
 @{
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
+
 @if (TempData["opertionResult"] != null)
 {
-    <h3></h3>
+    <div class="alert alert-info" role="alert">@TempData["opertionResult"]</div>
 }
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+    
+
+<div>
+    <div class='pull-right'>
+        <a asp-action="Create" class="btn btn-primary pull-right">Create New</a>
+    </div>
+    <h1>Your Recommendations</h1>
+</div>
+
+<div id="accordion" class="panel-group">
+    @foreach (var item in Model.Items)
+    {        
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <span class="label pull-right">@item.Category</span>
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#@item.Id">@item.Title</a>
+                </h4>
+            </div>
+            <div id="@item.Id" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <p>Short Desription: @item.ShortDescription</p>                    
+                </div>
+                <div class="panel-footer clearfix">
+                    <div class="pull-right">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Details</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-default">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-default deleteButton ">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>   
 
 <div id="modDialog" class="modal fade">
     <div id="dialogContent" class="modal-dialog"></div>
-</div>
+</div> 
 
-<table class="table content" id="content">
-    <tr>
-        <th>
-            Name
-        </th>
-        <th>
-            Short description
-        </th>
-        <th></th>
-    </tr>
-
-    @foreach (var item in Model.Items)
-    {
-        <tr>
-            <td>
-                <label class="control-label">@item.Title</label>
-            </td>
-            <td>
-                <label class="control-label">@item.ShortDescription</label>
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id" class="deleteButton">Delete</a>
-            </td>
-        </tr>
-    }
-</table>
 @Component.Invoke("Pagination", "Index", Model.PagingInfo)
 
-    
+
 

@@ -11,11 +11,11 @@ namespace RecommendationNetw.Models
         public Recommendation()
         {
             Id = Guid.NewGuid().ToString();
+            IsModerated = false;
         }
     }
     public class Recommendation<TKey> : IRecommendation<TKey>
-    {
-        
+    {        
         [Key]
         public TKey Id { get; set; }
 
@@ -51,6 +51,5 @@ namespace RecommendationNetw.Models
 
         //public virtual List<Tag> Tags { get; set; }
     }   
-
     public enum Category { Music = 1, Films, Books, Art, Other };
 }

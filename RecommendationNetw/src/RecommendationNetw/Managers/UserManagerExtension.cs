@@ -4,6 +4,7 @@ using Microsoft.Data.Entity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.OptionsModel;
 using RecommendationNetw.Models;
+using RecommendationNetw.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,12 @@ namespace RecommendationNetw.Managers
         public static Task<ApplicationUser> FindByIdWithRefAsync(this UserManager<ApplicationUser> manager, string userId)
         {
             return manager.Users.Include(x => x.Answers).FirstOrDefaultAsync(x => userId.Equals(x.Id));            
-        }        
+        }
+
+        public static Task<IEnumerable<string>> GetSimilarUsersId(this UserManager<ApplicationUser> manager, ISimilarityMeasure measure, string userId, Category category)
+        {
+            return null;
+        }
     }
 
 

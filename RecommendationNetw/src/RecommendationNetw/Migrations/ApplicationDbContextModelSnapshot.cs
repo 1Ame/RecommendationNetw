@@ -200,6 +200,27 @@ namespace RecommendationNetw.Migrations
                     b.HasKey("Id");
                 });
 
+            modelBuilder.Entity("RecommendationNetw.Models.Set", b =>
+                {
+                    b.Property<string>("Id");
+
+                    b.Property<int>("Category");
+
+                    b.Property<double>("Coeficient");
+
+                    b.Property<DateTime>("OwnerModifiedOn");
+
+                    b.Property<string>("OwnerUserId")
+                        .IsRequired();
+
+                    b.Property<DateTime>("TargetModifiedOn");
+
+                    b.Property<string>("TargetUserId")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+                });
+
             modelBuilder.Entity("RecommendationNetw.Models.Variant", b =>
                 {
                     b.Property<string>("Id");

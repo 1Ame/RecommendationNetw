@@ -8,7 +8,7 @@ using RecommendationNetw.Models;
 namespace RecommendationNetw.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20160523233730_migration")]
+    [Migration("20160607013927_migration")]
     partial class migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -196,6 +196,27 @@ namespace RecommendationNetw.Migrations
                         .HasAnnotation("MaxLength", 100);
 
                     b.Property<string>("Title")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+                });
+
+            modelBuilder.Entity("RecommendationNetw.Models.Set", b =>
+                {
+                    b.Property<string>("Id");
+
+                    b.Property<int>("Category");
+
+                    b.Property<double>("Coeficient");
+
+                    b.Property<DateTime>("OwnerModifiedOn");
+
+                    b.Property<string>("OwnerUserId")
+                        .IsRequired();
+
+                    b.Property<DateTime>("TargetModifiedOn");
+
+                    b.Property<string>("TargetUserId")
                         .IsRequired();
 
                     b.HasKey("Id");

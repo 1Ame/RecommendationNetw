@@ -1,24 +1,26 @@
 ﻿using Microsoft.Data.Entity;
 using RecommendationNetw.Abstracts;
 using RecommendationNetw.Models;
+using RecommendationNetw.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace RecommendationNetw.Repositories
 {
-    public class AnswersRepository<T> : AnswersRepository<T, string>, IRepository<T>
-           where T : class, IAnswer
+    public class QuestionsRepository<T> : QuestionsRepository<T, string>, IRepository<T>
+           where T : class, IQuestion
     {
-        public AnswersRepository(ApplicationDbContext Сontext)
+        public QuestionsRepository(ApplicationDbContext Сontext)
             : base(Сontext)
         {
         }        
     }
 
-    public class AnswersRepository<T, TKey> : IRepository<T, TKey>
-        where T : class, IAnswer<TKey>
+    public class QuestionsRepository<T, TKey> : IRepository<T, TKey>
+        where T : class, IQuestion<TKey>
         where TKey: IEquatable<TKey>
     {
         public ApplicationDbContext Context { get; private set; }
@@ -28,31 +30,31 @@ namespace RecommendationNetw.Repositories
             get { return Context.Set<T>(); }
         }
 
-        public AnswersRepository(ApplicationDbContext Сontext)
+        public QuestionsRepository(ApplicationDbContext Сontext)
         {
             Context = Сontext;
             AutoSaveChanges = true;
         }
 
         public virtual Task<T> FindByIdAsync(TKey Id)
-        {
+        {            
             return Items.FirstOrDefaultAsync(x => Id.Equals(x.Id));
-        }
-        public virtual async Task CreateAsync(T answer)
+        }        
+        public virtual async Task CreateAsync(T question)
         {
-            if (answer == null)
-                throw new ArgumentNullException("answer");
+            if (question == null)
+                throw new ArgumentNullException("question");
 
-            Context.Entry(answer).State = EntityState.Added;
+            Context.Entry(question).State = EntityState.Added;
 
             await SaveChangesAsync();
         }
-        public virtual async Task UpdateAsync(T answer)
+        public virtual async Task UpdateAsync(T question)
         {
-            if (answer == null)
-                throw new ArgumentNullException("answer");
+            if (question == null)
+                throw new ArgumentNullException("question");           
 
-            Context.Entry(answer).State = EntityState.Modified;
+            Context.Entry(question).State = EntityState.Modified;            
 
             await SaveChangesAsync();
         }
@@ -75,6 +77,6 @@ namespace RecommendationNetw.Repositories
             {
                 await Context.SaveChangesAsync();
             }
-        }
+        }        
     }
 }

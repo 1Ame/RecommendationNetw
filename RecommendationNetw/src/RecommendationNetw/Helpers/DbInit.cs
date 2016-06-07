@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace RecommendationNetw.Helpers
 {
@@ -26,40 +27,54 @@ namespace RecommendationNetw.Helpers
 
             if (!userManager.Users.Any())
             {
-                var user = new ApplicationUser { UserName = "aaa", Email = "aaa@aaa.com" };
-                var user1 = new ApplicationUser { UserName = "bbb", Email = "bbb@aaa.com" };
-                var result = await userManager.CreateAsync(user, "123Aa/");
-                result = await userManager.CreateAsync(user1, "123Aa/");
-                if (result.Succeeded)
+                for(int i = 0; i < 100; i++)
                 {
-                    var dbEntry = await userManager.FindByNameAsync(user.UserName);
-                    await userManager.AddToRoleAsync(dbEntry, "moder");
+                    var user = new ApplicationUser { UserName = "aaa" + i, Email = "aaa" + i + "@aaa.com" };
+                    var result = await userManager.CreateAsync(user, "123Aa/");
+                    if (result.Succeeded)
+                    {
+                        Debug.WriteLine("User {0} added.", i);                        
+                    }
                 }
+                await context.SaveChangesAsync();
             }
-            
+
+
             if (!context.Questions.Any())
             {
-                var question1 = new Question() {Category = Category.Art, Text = "Why?" };
-                var question2 = new Question() {Category = Category.Art, Text = "Who?" };
-                var question3 = new Question() {Category = Category.Art, Text = "When?" };
+                for (int i = 0; i < 20; i++)
+                {
+                    var question = new Question() { Category = Category.Art, Text = "Question" + i };
+                    context.Questions.Add(question);
 
-                var variants = new List<Variant>() {
-                    new Variant() { NumericValue = 1, TextValue = "WhyNot", QuestionId = question1.Id },
-                    new Variant() { NumericValue = 2, TextValue = "NotWhy", QuestionId = question1.Id },
-
-                    new Variant() { NumericValue = 1, TextValue = "He", QuestionId = question2.Id },
-                    new Variant() { NumericValue = 2, TextValue = "She", QuestionId = question2.Id },
-
-                    new Variant() { NumericValue = 1, TextValue = "In 2015", QuestionId = question3.Id },
-                    new Variant() { NumericValue = 2, TextValue = "In 2016", QuestionId = question3.Id }
-                };
-
-                context.Questions.Add(question1);
-                context.Questions.Add(question2);
-                context.Questions.Add(question3);
-                context.Variants.AddRange(variants);
+                    var variants = new List<Variant>()
+                    {
+                        new Variant() { NumericValue = 1, TextValue = "FirstVariant"+i, QuestionId = question.Id },
+                        new Variant() { NumericValue = 2, TextValue = "SecondVariant"+i, QuestionId = question.Id },                   
+                        new Variant() { NumericValue = 3, TextValue = "ThirdVariant" + i, QuestionId = question.Id }
+                    };
+                    context.Variants.AddRange(variants);
+                }
+                await context.SaveChangesAsync();
             }
-            await context.SaveChangesAsync();
+
+
+            if (!context.Answers.Any())
+            {
+                Random rnd = new Random();
+                foreach (var user in context.Users)
+                {
+                    foreach (var question in context.Questions)
+                        context.Answers.Add(new Answer()
+                        {
+                            Category = Category.Art,
+                            QuestionId = question.Id,
+                            OwnerId = user.Id,
+                            Value = rnd.Next(1, 10)
+                        });
+                }
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

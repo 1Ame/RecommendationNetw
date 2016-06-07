@@ -23,6 +23,7 @@ namespace RecommendationNetw.Models
         public DbSet<Recommendation> Recommendations { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
-        public DbSet<Variant> Variants { get; set; }        
+        public DbSet<Variant> Variants { get; set; }    
+        public DbSet<Set> Sets { get; set; }    
     }
 }

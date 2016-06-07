@@ -23,7 +23,7 @@ namespace RecommendationNetw.Repositories
         where T : class, IRecommendation<TKey>
         where TKey: IEquatable<TKey>
     {
-        private ApplicationDbContext Context { get;}
+        private ApplicationDbContext Context { get; }
         public bool AutoSaveChanges { get; set; }
         public IQueryable<T> Items
         {
@@ -67,7 +67,7 @@ namespace RecommendationNetw.Repositories
             if (id == null)
                 throw new ArgumentNullException("id");
 
-            var dbEntry = await FindByIdAsync(id);
+            var dbEntry = FindByIdAsync(id);
 
             if (dbEntry != null)
                 Context.Entry(dbEntry).State = EntityState.Deleted;

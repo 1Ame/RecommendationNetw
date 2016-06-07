@@ -59,6 +59,22 @@ namespace RecommendationNetw.Migrations
                     table.PrimaryKey("PK_Question", x => x.Id);
                 });
             migrationBuilder.CreateTable(
+                name: "Set",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    Category = table.Column<int>(nullable: false),
+                    Coeficient = table.Column<double>(nullable: false),
+                    OwnerModifiedOn = table.Column<DateTime>(nullable: false),
+                    OwnerUserId = table.Column<string>(nullable: false),
+                    TargetModifiedOn = table.Column<DateTime>(nullable: false),
+                    TargetUserId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Set", x => x.Id);
+                });
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -231,6 +247,7 @@ namespace RecommendationNetw.Migrations
             migrationBuilder.DropTable("AspNetUserRoles");
             migrationBuilder.DropTable("Answer");
             migrationBuilder.DropTable("Recommendation");
+            migrationBuilder.DropTable("Set");
             migrationBuilder.DropTable("Variant");
             migrationBuilder.DropTable("AspNetRoles");
             migrationBuilder.DropTable("AspNetUsers");

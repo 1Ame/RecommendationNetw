@@ -53,11 +53,11 @@ namespace RecommendationNetw.Managers
             }
         }
 
-        public virtual async Task<bool> CreateAsync(TQuestion recommendation)
+        public virtual async Task<bool> CreateAsync(TQuestion question)
         {
             try
             {
-                await _repository.CreateAsync(recommendation);
+                await _repository.CreateAsync(question);
                 return true;
             }
             catch
@@ -65,11 +65,11 @@ namespace RecommendationNetw.Managers
                 return false;
             }
         }
-        public virtual async Task<bool> UpdateAsync(TQuestion recommendation)
+        public virtual async Task<bool> UpdateAsync(TQuestion question)
         {
             try
             {
-                await _repository.UpdateAsync(recommendation);
+                await _repository.UpdateAsync(question);
                 return true;
             }
             catch

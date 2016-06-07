@@ -12,8 +12,8 @@
         <hr />
         <div class="form-group">
             <div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
-            <label class="col-md-2 control-label">Question</label>
-            <div class="col-md-10">
+            <label class="col-md-5 control-label">Question</label>
+            <div class="col-md-7">
                 <label class="control-label">Answer</label>
             </div>
         </div>
@@ -24,10 +24,10 @@
             <input asp-for="@Model[i].QuestionId" hidden="hidden" />
             <input asp-for="@Model[i].Category" hidden="hidden">
             <div class="form-group">
-                <label class="col-md-2 control-label">@Model[i].Question.Text</label>                
-                <div class="col-md-10">
+                <label class="col-md-5 control-label">@Model[i].Question.Text</label>                
+                <div class="col-md-7">
                     <select asp-for="@Model[i].Value" class="form-control" asp-items="@Html.GetVariantSelectList(Model[i].Question.Variants)">
-                        <option selected="selected" disabled="disabled">Select category</option>
+                        <option selected="selected" disabled="disabled">Select your answer</option>
                     </select>
                 </div>
             </div>

@@ -49,6 +49,7 @@ namespace RecommendationNetw
                 .AddSqlServer()
                 .AddDbContext<ApplicationDbContext>(options =>
                     options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
+            
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -65,14 +66,18 @@ namespace RecommendationNetw
             services.AddTransient<IRepository<Recommendation>, RecommendationsRepository<Recommendation>>();
             services.AddTransient<IRepository<Question>, QuestionsRepository<Question>>();
             services.AddTransient<IRepository<Answer>, AnswersRepository<Answer>>();
+            services.AddTransient<IRepository<Set>, SetsRepository<Set>>();
 
-            services.AddTransient<RecommendationService<ApplicationUser>>();
-            services.AddTransient<IMeasure, PearsonMeasure>();
+
+            services.AddTransient<RecommendationService<ApplicationUser, Answer, Set>>();
+            services.AddTransient<ISimilarityMeasure, PearsonMeasure>();
 
 
             services.AddTransient<RecommendationManager<Recommendation>>();
             services.AddTransient<QuestionManager<Question>>();
             services.AddTransient<AnswerManager<Answer>>();
+            services.AddTransient<SetManager<Set>>();
+
 
         }
 

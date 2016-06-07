@@ -8,30 +8,35 @@ using RecommendationNetw.Repositories;
 using RecommendationNetw.Helpers;
 using RecommendationNetw.ViewModels.Recommendations;
 using System.Security.Claims;
+using RecommendationNetw.Managers;
+using Microsoft.AspNet.Authorization;
 
 namespace RecommendationNetw.Controllers
 {
-    
+    [Authorize(Roles = "moderator")]
     public class ModerController : Controller
     {
-        private  readonly IRepository<Recommendation, string> _repository = null ;
+        private  readonly RecommendationManager<Recommendation> _recomManager;
+        private readonly int PageSize = 3;
 
-        public ModerController(IRepository<Recommendation, string> repository)
+        public ModerController(RecommendationManager<Recommendation> manager)
         {
-            _repository = repository;    
+            _recomManager = manager;    
         }
                 
         public async Task<IActionResult> Index(int page = 1)
         {
-            //var items = (await _repository.FindAllAsync(x => x.IsModerated == false)).OrderBy(x => x.Owner);
-            //var pagingInfo = new PagingInfo(items.Count(), page, 1);
+            var items = _recomManager.FindAllAsync(x => x.IsModerated.Equals(false));            
 
-            //var model = new ListViewModel()
-            //{
-            //    Items = items.Skip((pagingInfo.CurrentPage - 1) * pagingInfo.PageSize).Take(pagingInfo.PageSize),
-            //    PagingInfo = pagingInfo
-            //};
-            return View(/*model*/);
-        }        
+            var model = new ListViewModel()
+            {
+                PagingInfo = new PagingInfo(await items.CountAsync(), page, PageSize),
+
+                Items = await items.Skip((page - 1) * PageSize)
+                    .Take(PageSize)
+                    .ToListAsync(),                
+            };
+            return View(model);
+        }         
     }
 }

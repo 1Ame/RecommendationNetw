@@ -13,6 +13,7 @@ namespace RecommendationNetw.Models
             Id = Guid.NewGuid().ToString();
         }
     }
+
     public class Answer<TKey> : IAnswer<TKey>
     { 
         [Key]
@@ -22,7 +23,7 @@ namespace RecommendationNetw.Models
         public int Value { get; set; }
 
         [Required]
-        public Category Category { get; set; }
+        public Category Category { get; set; }        
 
         public string QuestionId { get; set; }
         public virtual Question Question { get; set; }

@@ -46,11 +46,8 @@ namespace RecommendationNetw.Managers
             {
                 return null;
             }
-        }
-        public virtual Task<TRecom> FindByIdWithRefAsync<TProp>(TKey Id)
-        {
-            return _repository.Items.Include(x => x.Owner).FirstOrDefaultAsync(x => Id.Equals(x.Id));
-        }
+        }        
+
         public virtual async Task<bool> CreateAsync(TRecom recommendation)
         {
             try
@@ -82,11 +79,12 @@ namespace RecommendationNetw.Managers
                 await _repository.DeleteAsync(Id);
                 return true;
             }
-            catch
+            catch(Exception e)
             {
                 return false;
             }
         }
+
         public virtual async Task<bool> SetModerationValue(TKey Id, bool Value)
         {
             try

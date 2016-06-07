@@ -16,11 +16,11 @@ namespace RecommendationNetw.Controllers
     public class RecommendationsController : Controller
     {
         private readonly RecommendationManager<Recommendation> _recomManager;
-        private readonly RecommendationService<ApplicationUser> _service = null;
+        private readonly RecommendationService<ApplicationUser,Answer,Set> _service = null;
 
         private readonly int PageSize = 3;
 
-        public RecommendationsController(RecommendationManager<Recommendation> manager, RecommendationService<ApplicationUser> service)
+        public RecommendationsController(RecommendationManager<Recommendation> manager, RecommendationService<ApplicationUser, Answer, Set> service)
         {
             _recomManager = manager;
             _service = service;            
@@ -58,7 +58,6 @@ namespace RecommendationNetw.Controllers
             {
                 return HttpNotFound();
             }
-
             return View(recommendation);
         }
 
@@ -71,7 +70,7 @@ namespace RecommendationNetw.Controllers
         // POST: Recommendations/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id, Title, ShortDescription, Description, Category")] Recommendation model)
+        public async Task<IActionResult> Create([Bind("Title, ShortDescription, Description, Category")] Recommendation model)
         {
             if (ModelState.IsValid)
             {
@@ -142,6 +141,20 @@ namespace RecommendationNetw.Controllers
             }
 
             return PartialView("_DeleteConfirm", model);
-        }        
+        }
+
+        public async Task<IActionResult> GetRecommendations(Category category)
+        {
+            if (category == 0)
+            {
+                return HttpNotFound();
+            }
+           
+            var recommendations2 = await _service.GetSimilarUsers2(User.GetUserId(), category);
+
+
+
+            return View();
+        }
     }
 }
